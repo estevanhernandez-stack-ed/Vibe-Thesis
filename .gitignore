@@ -1,0 +1,16 @@
+node_modules/
+*.log
+.DS_Store
+.env
+.env.local
+*.tmp
+*.bak
+
+# build artifacts from local hello-world preflight
+/c/tmp/vibe-thesis-helloworld/
+
+# the .qodo working dir from prior tooling
+.qodo/
+
+# the worked example's render output is committed (for diff comparison) — but everything else under 08_OUTPUT in user projects is ignored
+# (this matters only for the plugin repo; user projects ship their own .gitignore via templates/full/)

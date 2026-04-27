@@ -1,0 +1,21 @@
+{
+  "name": "vibe-thesis",
+  "owner": {
+    "name": "626Labs LLC"
+  },
+  "metadata": {
+    "description": "Vibe Thesis — scaffold and co-author thesis-shaped artifacts (PDF, HTML, lay-version) with Claude Code. Install, say 'scaffold a vibe thesis project,' get a styled PDF skeleton plus a working render pipeline in roughly 30 minutes."
+  },
+  "plugins": [
+    {
+      "name": "vibe-thesis",
+      "source": "./plugins/vibe-thesis",
+      "description": "Vibe Thesis — scaffold and co-author thesis-shaped artifacts (PDF, HTML, lay-version) with Claude Code. Wraps ThesisStudio's templates payload with a Claude-Code-native orchestrator, voice-synthesis interview, and self-review-tone guard.",
+      "author": {
+        "name": "626Labs LLC"
+      },
+      "keywords": ["vibe-thesis", "thesis-writing", "academic-writing", "pandoc", "claude-code-plugin", "scaffolding", "spec-driven", "lead-writer", "voice-synthesis"],
+      "category": "education"
+    }
+  ]
+}
