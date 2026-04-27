@@ -181,3 +181,27 @@
 - **Harvard / Vancouver generic CSL files.** The upstream `citation-style-language/styles` repo does not ship generic Harvard or Vancouver styles — both are typically institution-flavored (e.g., `cardiff-university-harvard.csl`, `bmj.csl` for Vancouver-style). The styles README documents this gap and points users to the upstream repo + Zotero registry for institution-specific picks.
 - **Upstream Space Grotesk fix.** Issue #6 filed against ThesisStudio; not appropriate for Vibe Thesis to PR upstream during its own cycle. Vibe Thesis ships the option (b) workaround that bridges until the upstream fix lands.
 - **Auto-detect font check on Path B's gh-spawned tree.** Path B inherits ThesisStudio's tokens.yaml (which references the same fonts); the font-detection logic in 2.1 fires identically regardless of scaffold path. No path-specific code needed.
+
+### Iteration 2.4 + 2.5 (mid-Beat, 2026-04-26 22:21 CST)
+
+Triggered by Beat D + Beat C empirical findings:
+
+- [x] **2.4. CRITICAL — Add CSL files + styles README to `templates/overlay/`**
+  Spec ref: `plugins/vibe-thesis/templates/overlay/05_CITATIONS/styles/`
+  What was built: copied the 6 CSL files + styles README from `templates/full/` to `templates/overlay/`. Beat D's first run revealed Path B users would get a tree without CSL files because the overlay-invariant only checked overlay → full byte-equality, not full → overlay coverage of local additions. Fixed.
+  Acceptance: Beat D re-run produces zero diffs between Path A and Path B trees post-overlay (modulo `.git/` and `inject-marker.sh`).
+  Verify: `bash scripts/check-overlay-invariant.sh` exits 0 AND `diff -r --exclude='.git' --exclude='node_modules' --exclude='08_OUTPUT' --exclude='inject-marker.sh' /tmp/pathA/ /tmp/pathB/` returns empty. ✓ confirmed.
+
+- [x] **2.5. CRITICAL — Fix `tokens.yaml` field names in orchestrator's font-detection logic**
+  Spec ref: `plugins/vibe-thesis/skills/vibe-thesis/SKILL.md > Step 4 > Native chosen > Font detection`
+  What was built: replaced `typography.serif_body` → `typography.body_font` and `typography.sans_heading` → `typography.heading_font` throughout the SKILL's font-detection prose AND the option (b) auto-substitute YAML block. Beat C's first run revealed the original draft used wrong field names — only `code_font` got substituted, leaving `body_font`/`heading_font` as the original Adobe Source fonts that would still fail at render time on a font-less native install. Added a "Field-name correctness" verification note citing Beat C as the empirical source.
+  Acceptance: Auto-substitute applied to a real `tokens.yaml` actually swaps all three font fields to Latin Modern.
+  Verify: Beat C re-run with corrected field names → render succeeded → 41KB PDF produced via lualatex on Estevan's Windows + MiKTeX 25.12 + Quarto-bundled Pandoc 3.6.3.
+
+### Beat C / D / E results — empirical close summary (2026-04-26 22:21 CST)
+
+| Beat | Result | Findings |
+|---|---|---|
+| **C** — Path A round-trip on font-less native install | ✓ green | Surfaced 2 bugs in Iteration 2.1 (now fixed via 2.5); empirically confirms the option (b) workaround produces a 41KB PDF on Windows + MiKTeX + Quarto-pandoc; lualatex used (not xelatex); render-pdf, compile-tokens, manifest emission all work |
+| **D** — Tree-equivalence diff Path A vs Path B | ✓ green (after 2.4 fix) | First run surfaced missing CSL files in overlay; fix landed; re-run produced zero diffs; confirms dual-path scaffold preserves byte-equivalent trees post-bootstrap modulo `.git/` |
+| **E** — Synthesis-guard pattern scan over staged file | ✓ green | Standard-mode caught 6 inflationary + 3 self-praise + 1 conclusion-re-assertion finding in synthetic file; clean file scored 0; pattern table empirically correct |

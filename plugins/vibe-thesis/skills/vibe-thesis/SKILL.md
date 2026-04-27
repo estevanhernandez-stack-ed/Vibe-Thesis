@@ -179,8 +179,8 @@ Ask one question:
 
   - **Font detection (added Iteration 2.1, post-Beat-B finding).** After the
     toolchain binary check, parse the project's
-    `00_DESIGN_SYSTEM/tokens.yaml` for `typography.serif_body`,
-    `typography.sans_heading`, `typography.code_font` (and the editorial
+    `00_DESIGN_SYSTEM/tokens.yaml` for `typography.body_font`,
+    `typography.heading_font`, `typography.code_font` (and the editorial
     layer's font references if `editorial.enabled: true`). For each named
     font family, run a presence check:
     - **Linux/macOS:** `fc-list | grep -iE "<family>"`
@@ -233,11 +233,16 @@ Ask one question:
                       # See https://github.com/estevanhernandez-stack-ed/ThesisStudio/issues
                       # for the upstream fix tracker.
     # ORIGINAL VALUES (restore when fonts are installed):
-    #   typography.serif_body: "Source Serif 4"
-    #   typography.sans_heading: "Source Sans Pro"
+    #   typography.body_font: "Source Serif Pro"
+    #   typography.heading_font: "Source Sans Pro"
     #   typography.code_font: "JetBrains Mono"
     #   editorial.enabled: true
     ```
+
+    **Field-name correctness (verified at Beat C, 2026-04-26 22:21 CST):**
+    `tokens.yaml` uses `body_font` / `heading_font` / `code_font` — NOT
+    `serif_body` / `sans_heading` (typo'd in an earlier draft of this
+    SKILL). The names above match what `scripts/compile-tokens.js` reads.
 
     Then re-run `npm run compile-tokens` to regenerate the LaTeX/CSS variants.
 
