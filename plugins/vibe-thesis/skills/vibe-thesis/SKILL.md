@@ -58,7 +58,37 @@ ON_INVOCATION:
 
 ### Step 1 — Source the workspace
 
-Detect scaffold path:
+#### Resolve `PLUGIN_DIR`
+
+The plugin needs to know where its own files live to reach
+`templates/full/`, `templates/overlay/`, and `examples/demo-article/`.
+Resolution is **runtime-relative to this SKILL.md file's location**:
+
+```bash
+# This SKILL.md lives at $PLUGIN_DIR/skills/vibe-thesis/SKILL.md.
+# Walk up two levels to find $PLUGIN_DIR.
+SKILL_PATH="$(dirname "$(readlink -f "${SKILL_FILE:-$0}")")"
+PLUGIN_DIR="$(cd "$SKILL_PATH/../.." && pwd)"
+
+# Sanity check — these paths must exist for the orchestrator to function.
+test -d "$PLUGIN_DIR/templates/full" || {
+  echo "ERROR: cannot find templates/full/ at expected path $PLUGIN_DIR/templates/full" >&2
+  echo "Plugin install may be corrupted; reinstall with /plugin install vibe-thesis@vibe-thesis" >&2
+  exit 1
+}
+```
+
+Claude Code resolves the orchestrator skill's working directory to the
+plugin's nested install path (typically
+`~/.claude/plugins/installed/vibe-thesis/plugins/vibe-thesis/skills/vibe-thesis/`
+for marketplace installs, or the equivalent for raw-git installs). The
+`../..` walk lands at `plugins/vibe-thesis/` — the plugin's content root.
+
+When emitting `Bash(...)` invocations from inside the orchestrator skill,
+use `${PLUGIN_DIR}` consistently as the prefix. **Never** hardcode
+`~/.claude/plugins/...` paths — they vary across install methods.
+
+#### Detect scaffold path
 
 ```bash
 gh_ok=false
@@ -74,10 +104,14 @@ default per `gh_ok`:
   - Ask one question for project name (the directory becomes
     `<project-name>/`): *"What's the project name? This will be the GitHub
     repo name and the folder name. Lowercase + hyphens recommended."*
+  - Ask one question for repo visibility: *"Public or private? Public is
+    standard for theses you want citable / on a CV; private is the safe
+    default for in-progress work. You can change either later."* Default
+    suggestion in the prompt is **public** (matches what most thesis
+    builders want); if the builder gives no answer, fall back to private.
   - `gh repo create --template estevanhernandez-stack-ed/ThesisStudio
-    "${PROJECT_NAME}" --private --clone`
-    (Default privacy `--private`; user can change later. `--clone` lands
-    the spawned tree in `./<PROJECT_NAME>/`.)
+    "${PROJECT_NAME}" --${VISIBILITY} --clone`
+    (`--clone` lands the spawned tree in `./<PROJECT_NAME>/`.)
   - `cd "${PROJECT_NAME}"`
   - Apply overlay: `cp ${PLUGIN_DIR}/templates/overlay/.gitattributes ./`
   - Run marker-injection: `bash ${PLUGIN_DIR}/templates/overlay/inject-marker.sh ./`
@@ -90,11 +124,6 @@ default per `gh_ok`:
     `.claude`, `.gitignore`, `.markdownlint.json`).
   - The marker stanza is already baked into `templates/full/CLAUDE.md` — no
     inject-marker step needed.
-
-`${PLUGIN_DIR}` resolves at runtime to the plugin's installation directory
-(typically `~/.claude/plugins/installed/vibe-thesis/plugins/vibe-thesis/` or
-the equivalent for marketplace-installed plugins). Determine via the
-plugin's working-directory contract.
 
 ### Step 2 — Dispatch project-local /bootstrap
 

@@ -29,9 +29,14 @@ sensible pre-steps and clean failure surfacing.
    `html` | `md` | `all`. Second positional arg = `--guard` (optional).
 
 3. **Optional guard pre-step.** If `--guard` was passed, dispatch
-   `/vibe-thesis:guard standard` first. Surface findings to the builder. Ask:
-   *"Synthesis guard found N issues. Render anyway, or fix first?"* Wait for
-   reply. Proceed only on explicit "render anyway" or "fix and re-run."
+   `/vibe-thesis:guard standard` first.
+   - If guard reports `0 findings`: print `✓ Synthesis guard clean — proceeding to render.` and continue to step 4.
+   - If guard reports `>0 findings`: surface the full findings list. Ask:
+     *"Synthesis guard found N issues. Three options: (a) **render anyway** — produce the PDF with the current text, (b) **fix-and-re-run** — pause render so you can edit, then re-invoke `/vibe-thesis:vibe-render <format> --guard`, (c) **drop the --guard** — render without the gate this time."*
+   - On `(a)`: proceed to step 4. Note in the manifest that render proceeded with N unresolved guard findings.
+   - On `(b)`: stop here. Surface a one-line list of `<file>:<line>` references for fast navigation. Do not run render.
+   - On `(c)`: proceed to step 4 with no manifest annotation.
+   - **Never auto-fix the findings.** Synthesis guard is advisory; the user revises.
 
 4. **Run pre-steps.**
    - `npm run compile-tokens` — recompiles design tokens from `tokens.yaml`.
