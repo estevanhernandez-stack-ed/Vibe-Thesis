@@ -1,9 +1,11 @@
 # Vibe Thesis
 
-> A Claude Code plugin that scaffolds and co-authors thesis-shaped artifacts —
-> academic dissertations, master's theses, long-form research articles,
-> position essays. Install, say *"scaffold a vibe thesis project for me,"*
-> get a styled PDF skeleton plus a working render pipeline in roughly 30 minutes.
+> *Start with a strong stance before you even ask for a line of code.*
+
+A Claude Code plugin that scaffolds and co-authors thesis-shaped artifacts —
+academic dissertations, master's theses, long-form research articles,
+position essays. Install, say *"scaffold a vibe thesis project for me,"*
+get a styled PDF skeleton plus a working render pipeline in roughly 30 minutes.
 
 Vibe Thesis is a wrapper around the [ThesisStudio][thesisstudio] template that adds
 Claude-Code-native orchestration: dual scaffold paths (offline-bundled or live `gh`
@@ -16,14 +18,14 @@ template fork), an author-voice synthesis interview, and a self-review-tone guar
 ### From the Anthropic plugin marketplace (preferred)
 
 ```text
-/plugin marketplace add estevanhernandez-stack-ed/vibe-thesis
+/plugin marketplace add estevanhernandez-stack-ed/Vibe-Thesis
 /plugin install vibe-thesis@vibe-thesis
 ```
 
 ### From a raw git URL (fallback)
 
 ```text
-/plugin marketplace add https://github.com/estevanhernandez-stack-ed/vibe-thesis
+/plugin marketplace add https://github.com/estevanhernandez-stack-ed/Vibe-Thesis
 /plugin install vibe-thesis@vibe-thesis
 ```
 
