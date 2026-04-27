@@ -272,3 +272,39 @@ Result: dirt-simple `.claude-plugin/plugin.json` with auto-discovered components
 5. If any divergence surfaces (install verb wrong, frontmatter rejected, skill not auto-discovered), update `docs/spec.md > Plugin Manifest` BEFORE relying on items 3-10 outputs.
 
 **Decision:** proceed under high-confidence assumption that the spec is correct. Spec was live-verified at /spec; the preflight is insurance, not a blocker. If verification fails post-build, item 11 will catch it (the in-progress vibe-thesis plugin won't install) and trigger an /iterate beat per cart-cycle-brief stance.
+
+## /iterate
+
+**Run:** 2026-04-26 20:44 CST (close at ~20:55), fully-autonomous, in-band execution per cart-cycle-brief stance ("iteration is the cheap default in autonomous mode + parallel agents").
+
+**Disposition decision:** ran iterate rather than skipping straight to /reflect. Rationale per the iterate SKILL: builder-mode + autonomous-build + parallel-agents capability + post-build review pass surfaced real Tier 1 structural items (stale upstream docs, unresolved `${PLUGIN_DIR}` placeholder) that would have bitten /evolve later if left.
+
+**Quick-review pass surfaced 6 candidates across 3 tiers:**
+
+- Tier 1 (structural correctness, must-fix): (1) sync stale spec/prd/scope docs vs built reality; (2) resolve `${PLUGIN_DIR}` placeholder in orchestrator skill.
+- Tier 2 (UX, high-value-low-cost): (3) Path B `--private` default → ask one question; (4) tighten pre-render `--guard` integration contract.
+- Tier 3 (polish): (5) move VIBE_THESIS_HANDOFF.md under docs/; (6) move .gitkeep explanatory comments to README — deferred (low ROI in this iteration).
+
+**Executed (5 items in-band, ~15 min wall-clock):**
+
+1. **PLUGIN_DIR resolution** — replaced placeholder with runtime-relative resolution (walk up two levels from orchestrator SKILL.md location) + sanity-check that fails fast on missing templates/full/. Future-proofs against marketplace install path drift.
+2. **Path B visibility prompt** — one-question scaffold-time prompt; default suggestion `public` for thesis projects (matches typical citable/portfolio framing).
+3. **--guard integration tightened** — replaced loose "ask if render anyway" with concrete three-option contract (render anyway with manifest annotation / fix-and-re-run with file:line nav refs / drop --guard). Made "synthesis-guard is advisory; never auto-fix" an explicit invariant.
+4. **Drift-correction banners on spec/prd/scope** — three docs got top-of-doc banners naming what was originally proposed vs what was actually built. Preserves /spec-time framing as historical context for /reflect-time evaluation.
+5. **Moved VIBE_THESIS_HANDOFF.md to docs/** — cleaner repo root; planning history sits together.
+
+**Skipped (with rationale):**
+
+- Bulk markdown lint cleanup across spec.md (~700 lines, ~140 MD040/MD060 warnings). Pre-existing from original /spec write, not introduced by this cycle. Not worth chasing in iteration; defer to v0.1.x polish if marketplace listing requires zero-warning markdown.
+- Demo article PDF render. Cannot run from inside this autonomous /iterate session — needs Pandoc + texlive on this Windows host or the dev container. Captured in `docs/VERIFICATION_BEATS_OWED.md > Beat B + C`.
+- Refresh-templates automation (`/vibe-thesis:refresh-templates` to re-sync `templates/full/` from current ThesisStudio HEAD). Step 2 backlog per cart-cycle-brief; out of v0.1.
+
+**Active shaping signal observed:** none in-band this command. The mid-build course-correction (Estevan adding voice-synthesis + synthesis-guard) at /build was the prior shaping moment; iterate was clean execution against that revised plan.
+
+**Pattern observed (worth surfacing to /reflect):** Tier 1 work in iterate ("sync stale docs vs built reality") is the natural counterpart to mid-build course-corrections. Whenever the build absorbs a course-correction, the upstream specs go stale. Adding banners is cheaper than rewriting the docs and preserves both the original framing and current truth — useful for /reflect's "what would you do differently" evaluation.
+
+**Iteration entries added to checklist.md:** 5 items under `## Iteration 1` header, all marked `[x]` (executed in-band, not pending /build).
+
+**Commits:** 3 (`d85a843`, `793bc90`, `207a902`).
+
+**Handoff:** structured envelope (fully-autonomous mode) — outer harness fires `/reflect`. Verification beats owed: same 7 from /build (no new ones added by iterate). Iterate's own work is empirically verifiable via `git log --oneline` and direct inspection of the touched files.
