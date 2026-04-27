@@ -1,0 +1,11 @@
+# Placeholder for the rendered example.pdf.
+#
+# The PDF gets generated on first scaffold-mode round-trip:
+#   npm run render:pdf
+#
+# It is intentionally NOT committed to the plugin repo because:
+# (a) PDF rendering depends on the user's local Pandoc + texlive + fonts
+#     install — embedding a snapshot would be misleading about reproducibility.
+# (b) The structural verification beat (checklist item 12) is the canonical
+#     proof that the pipeline round-trips end-to-end.
+# (c) Binary artifacts in plugin repos bloat clone times for marketplace users.
