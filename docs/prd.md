@@ -1,6 +1,42 @@
 # Vibe Thesis — Product Requirements
 
-> **Inputs:** [`scope.md`](scope.md) + [`cart-cycle-brief.md`](cart-cycle-brief.md) + [`builder-profile.md`](builder-profile.md) + the originating handoff sketch [`../VIBE_THESIS_HANDOFF.md`](../VIBE_THESIS_HANDOFF.md). Generated 2026-04-26 19:11 CST in `'fully-autonomous'` autonomy mode; no in-conversation interview turn. The cart-cycle-brief's `/prd` stance pre-statement (0 deepening rounds, single non-negotiable acceptance criterion drives the doc, scope-creep guard refuses v0.2 sub-skills + additional slash commands + mode-taxonomy generalization + standalone CLI + marketplace polish + customization granularity + `/vibe-update`) is canonical.
+> ## ⚠ Drift correction — 2026-04-26 20:22 CST (mid-build)
+>
+> **Two material changes** to this PRD landed during /build:
+>
+> **1. Epic 2 (Bootstrap Identity) is now project-local, not plugin-side.**
+> The bootstrap interview ships inside `templates/full/.claude/skills/bootstrap/`
+> (lifted verbatim from ThesisStudio, which already handles 6 fields including
+> three pillars + citation style + license). The orchestrator dispatches to
+> project namespace `/bootstrap`, not plugin namespace `/vibe-thesis:bootstrap`.
+> Acceptance criteria still hold; the location of the implementation moved.
+>
+> **2. Two new epics added per Estevan course-correction:**
+>
+> - **Epic 11: Author Voice Synthesis** — `/vibe-thesis:voice` runs a
+>   three-question interview naming 2-4 well-known authors + 2-4 contemporary
+>   field experts in the topic + a synthesis ratio. Writes a
+>   `## VOICE SYNTHESIS` block to CLAUDE.md so the LeadWriter persona reads it
+>   at drafting time. Idempotent.
+> - **Epic 12: Synthesis Guard** — `/vibe-thesis:guard` runs a self-review-tone
+>   lint over `03_BODY/*.md` (inflationary language, self-praise framings,
+>   defensive over-qualification, conclusions re-asserting importance). Makes
+>   ThesisStudio's "Honest Limits" pillar default enforceable, not aspirational.
+>   Integrates with `/vibe-thesis:vibe-render --guard` for pre-render gating.
+>
+> Both epics are in scope for v0.1 (NOT deferred). The original PRD's
+> "What We'd Add With More Time" list still applies for `lay-translator` and
+> `research-integrate` — but with a caveat: those sub-skills are **already in
+> ThesisStudio** and ship project-local automatically as part of
+> `templates/full/.claude/skills/`. The "deferral" was framing-only; users get
+> them on first scaffold either way.
+>
+> See `docs/checklist.md > Checklist` (revised, 13 items) and
+> `docs/VERIFICATION_BEATS_OWED.md` for the build-time canonical state.
+
+---
+
+> **Inputs:** [`scope.md`](scope.md) + [`cart-cycle-brief.md`](cart-cycle-brief.md) + [`builder-profile.md`](builder-profile.md) + the originating handoff sketch [`VIBE_THESIS_HANDOFF.md`](VIBE_THESIS_HANDOFF.md). Generated 2026-04-26 19:11 CST in `'fully-autonomous'` autonomy mode; no in-conversation interview turn. The cart-cycle-brief's `/prd` stance pre-statement (0 deepening rounds, single non-negotiable acceptance criterion drives the doc, scope-creep guard refuses v0.2 sub-skills + additional slash commands + mode-taxonomy generalization + standalone CLI + marketplace polish + customization granularity + `/vibe-update`) is canonical.
 
 ## Problem Statement
 

@@ -1,8 +1,58 @@
 # Vibe Thesis — Technical Spec
 
-> **Inputs:** [`scope.md`](scope.md), [`prd.md`](prd.md), [`cart-cycle-brief.md`](cart-cycle-brief.md), [`builder-profile.md`](builder-profile.md), [`../VIBE_THESIS_HANDOFF.md`](../VIBE_THESIS_HANDOFF.md). Generated 2026-04-26 19:16 CST in `'fully-autonomous'` autonomy mode; the cart-cycle-brief's `/spec` stance pre-statement (lift existing stack verbatim, no new deps, manifest format verified live, scaffold-path resolution = ship-both-with-auto-detection, Federation N/A) is canonical.
+> ## ⚠ Drift correction — 2026-04-26 20:22 CST (mid-build)
 >
-> **Live-verification status:** plugin manifest format and component layout were verified 2026-04-26 against live Anthropic docs at https://code.claude.com/docs/en/plugins.md and https://code.claude.com/docs/en/plugins-reference.md, and cross-checked against the working `vibe-cartographer` plugin at `C:/Users/estev/.claude/plugins/marketplaces/vibe-cartographer/`. Q1 from the PRD is closed.
+> **What changed at /build item 2 (source repo audit):** the originating handoff
+> sketch's inventory turned out to be **significantly out-of-date** relative to
+> current ThesisStudio. ThesisStudio has absorbed nearly every "L-tagged" local
+> addition (install-fonts.sh, lay-manifest.schema.json, lay-translator skill,
+> research-integrate skill). Only `.gitattributes` remains a true local addition.
+>
+> **What this spec originally proposed (now superseded):** plugin-side fork of
+> `bootstrap` and `merge-authors`; "generalize beyond ThesisStudio name"; v0.2
+> deferral of `lay-translator` and `research-integrate`.
+>
+> **What was actually built (canonical):**
+>
+> - **Sub-skills ship project-local**, not plugin-side. `bootstrap`,
+>   `merge-authors`, `lay-translator`, `research-integrate` all live in
+>   `templates/full/.claude/skills/` (lifted verbatim from ThesisStudio). The
+>   plugin does NOT fork them. The orchestrator dispatches via the Skill tool to
+>   the **project namespace** (e.g., `/bootstrap`, not
+>   `/vibe-thesis:bootstrap`).
+> - `templates/full/` = ThesisStudio clone (102 files) + `.gitattributes` + a
+>   marker-stanza appended to `CLAUDE.md`. **103 files total**, NOT the 27-file
+>   sketch in §1 of this spec.
+> - `templates/overlay/` = `.gitattributes` + `inject-marker.sh` (2 files), NOT
+>   the 4-file overlay this spec originally specified.
+> - **Two new plugin-side skills not in the original spec**, added per Estevan
+>   course-correction at /build item 6: `voice-synthesis` (author-voice
+>   interview, writes `## VOICE SYNTHESIS` block to CLAUDE.md) and
+>   `synthesis-guard` (self-review-tone lint over `03_BODY/*.md`). Both have
+>   slash commands (`/vibe-thesis:voice`, `/vibe-thesis:guard`).
+> - **`PLUGIN_DIR` resolution** is runtime-relative to the orchestrator
+>   SKILL.md's location (walk up two levels from
+>   `skills/vibe-thesis/SKILL.md`). Never hardcode `~/.claude/plugins/...`
+>   paths.
+> - **Path B `gh repo create` visibility** is a one-question scaffold-time
+>   prompt (default suggestion: public for thesis projects), not a
+>   silent `--private` default.
+>
+> **What's still authoritative in this spec:** the plugin manifest shape (live
+> verified — closes PRD Q1), the dual-scaffold-path framing, the marker-based
+> detection, the tree-equivalence diff method, the structural verification
+> beat procedure, and the deployment / signing fields.
+>
+> See `docs/checklist.md > Checklist` (revised) and `docs/VERIFICATION_BEATS_OWED.md`
+> for the build-time canonical state. The sections below preserve the
+> /spec-time framing for `/reflect`-time evaluation; treat them as historical
+> context, not implementation guidance.
+
+---
+
+> **Inputs:** [`scope.md`](scope.md), [`prd.md`](prd.md), [`cart-cycle-brief.md`](cart-cycle-brief.md), [`builder-profile.md`](builder-profile.md), [`VIBE_THESIS_HANDOFF.md`](VIBE_THESIS_HANDOFF.md). Generated 2026-04-26 19:16 CST in `'fully-autonomous'` autonomy mode; the cart-cycle-brief's `/spec` stance pre-statement (lift existing stack verbatim, no new deps, manifest format verified live, scaffold-path resolution = ship-both-with-auto-detection, Federation N/A) is canonical.
+>
+> **Live-verification status:** plugin manifest format and component layout were verified 2026-04-26 against live Anthropic docs at <https://code.claude.com/docs/en/plugins.md> and <https://code.claude.com/docs/en/plugins-reference.md>, and cross-checked against the working `vibe-cartographer` plugin at `C:/Users/estev/.claude/plugins/marketplaces/vibe-cartographer/`. Q1 from the PRD is closed.
 
 ## Stack
 

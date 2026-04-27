@@ -1,5 +1,21 @@
 # Vibe Thesis
 
+> ## ⚠ Drift correction — 2026-04-26 20:22 CST (mid-build)
+>
+> The "What's Explicitly Cut" section below lists `lay-translator` and
+> `research-integrate` as v0.2 deferrals. **In current ThesisStudio (verified
+> at /build item 2), both sub-skills are already shipped** as project-local
+> skills. Users get them on first scaffold via `templates/full/.claude/skills/`
+> with no plugin-side work. The deferral was framing-only; nothing was actually
+> cut from the user's experience.
+>
+> The "Loose Implementation Notes" section's plugin layout sketch is
+> superseded by the actual built layout in
+> `plugins/vibe-thesis/docs/architecture.md`. Two new plugin-side skills (not
+> in this scope doc) shipped per Estevan course-correction:
+> `voice-synthesis` and `synthesis-guard`. See `docs/checklist.md > Iteration 1`
+> for what got revised.
+
 ## Idea
 
 A Claude Code plugin that scaffolds and co-authors thesis-shaped projects end-to-end. A user opens a fresh directory in Claude Code, says *"I want to write a thesis on X,"* and ~30 minutes later they have a styled PDF skeleton, a working render pipeline, a proposal, an outline, a claim map, and the dev container running. From there, the same orchestrator coaches them through proposal → research → drafting → rendering and dispatches supporting sub-skills (bootstrap, agent swarms, lay-translator, research-integrate, merge-authors) at the right moments. The render pipeline is bash-callable, but the user never has to remember `npm run render:pdf` — they say "render the PDF" and Claude does.
