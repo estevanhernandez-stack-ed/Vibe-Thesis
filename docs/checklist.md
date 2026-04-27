@@ -97,7 +97,57 @@
   Verify: Both `/tmp/vibe-thesis-verify-path{A,B}/08_OUTPUT/pdf/example.pdf` exist and open as valid PDFs. `diff -r ...` exits 0.
 
 - [ ] **12. Documentation & security verification**
+  *(see below for iteration-1 items appended after the structural-verification beat)*
+
+
   Spec ref: `prd.md > What We're Building` + `spec.md > Deployment — Identity & Signing` + all spec sections
   What to build: Write `README.md` at the plugin repo root covering what Vibe Thesis does, how to install (marketplace + raw git URL), basic usage ("scaffold a vibe thesis project for me"), the dual scaffold path explanation, the dev container vs native install note, the link to `docs/architecture.md` for deeper understanding, screenshots of a freshly-scaffolded project + rendered PDF (capture during item 11). Confirm all `docs/` artifacts in the project (this `c:\Users\estev\Projects\vibe-thesis\docs/` folder containing scope, prd, spec, checklist, cart-cycle-brief, builder-profile) are up to date — if anything changed during build, fix the docs to reflect reality. Author `CHANGELOG.md` for v0.1.0 release notes. Author `LICENSE` (MIT, attribution to 626Labs LLC). Run `npm audit` against `plugins/vibe-thesis/templates/full/package.json` (NOT against the plugin repo itself, which has zero npm deps) — flag and address critical / high vulnerabilities. Secrets scan: `git log --all -p | grep -iE "password|secret|api[_-]?key|token" | grep -v "EXAMPLE\|placeholder\|test"` — confirm zero matches in committed code. Verify `.gitignore` covers `node_modules/`, `08_OUTPUT/`, `.env`, `*.log`. Author `.env.example` with no env vars (the plugin itself needs none) but document that scaffolded projects may need `BIBER_PATH` if biber isn't on PATH. Create the GitHub repo if it doesn't exist (`gh repo create`); push final code; tag `v0.1.0`. Submit plugin to Anthropic plugin marketplace per their listing process.
   Acceptance: README is clear enough that a fresh user can install + scaffold without prior knowledge. All `docs/` artifacts are current. No secrets in git history. Dependency audit shows no unaddressed critical/high vulns. v0.1.0 tag exists. Plugin is submitted to marketplace (or marketplace listing PR is open).
   Verify: Clone the repo into a fresh directory, follow the README, install the plugin, scaffold a project. The user-experience matches what the README promised. `git log --all -p | grep -iE "password|secret|api[_-]?key|token" | grep -v "EXAMPLE\|placeholder\|test"` returns zero. `gh release list` shows `v0.1.0`.
+
+---
+
+## Iteration 1 (2026-04-26 20:44 CST, post-build polish)
+
+> Tier 1 (structural correctness) + Tier 2 (UX) + one Tier 3 quick-win, executed in-band per fully-autonomous + cart-cycle-brief stance ("iteration is the cheap default in autonomous mode + parallel agents"). Skipped: bulk markdown-lint cleanup (low ROI; pre-existing warnings, not introduced by this cycle).
+
+- [x] **1.1. Tier 1 — Resolve `${PLUGIN_DIR}` in orchestrator skill**
+  Spec ref: `plugins/vibe-thesis/skills/vibe-thesis/SKILL.md > Step 1`
+  What was built: Replaced the `${PLUGIN_DIR}` placeholder with a concrete runtime-relative resolution (walk up two levels from the orchestrator SKILL.md's location) plus a sanity-check that fails fast if `templates/full/` isn't reachable. Future-proofs against marketplace install path drift.
+  Acceptance: Orchestrator can locate its own templates/examples without hardcoding `~/.claude/plugins/...` paths.
+  Verify: Read updated SKILL.md `Step 1 — Source the workspace > Resolve PLUGIN_DIR` block.
+
+- [x] **1.2. Tier 2 — Path B `gh repo create` visibility prompt**
+  Spec ref: `plugins/vibe-thesis/skills/vibe-thesis/SKILL.md > Step 1 > Path B`
+  What was built: Added a one-question scaffold-time prompt for repo visibility (public/private). Default suggestion is public for thesis projects (matches the typical citable/portfolio framing); silent fallback is still private. Eliminates the "my thesis repo accidentally went public/private" UX hazard.
+  Acceptance: Path B asks one question; either choice works; sensible default.
+  Verify: Read updated SKILL.md Path B step block.
+
+- [x] **1.3. Tier 2 — Pre-render `--guard` integration tightened**
+  Spec ref: `plugins/vibe-thesis/skills/vibe-render/SKILL.md > Step 3`
+  What was built: Replaced the loose "ask if render anyway, or fix first" prompt with a concrete three-option contract: (a) render anyway with manifest annotation, (b) fix-and-re-run with file:line nav refs, (c) drop --guard. Made "synthesis guard is advisory; never auto-fix" an explicit invariant.
+  Acceptance: vibe-render's --guard pre-step has unambiguous behavior contract that /build can implement without guessing.
+  Verify: Read updated vibe-render SKILL.md step 3.
+
+- [x] **1.4. Tier 1 — Drift-correction banners on stale upstream docs**
+  Spec ref: `docs/spec.md`, `docs/prd.md`, `docs/scope.md`
+  What was built: Added a `⚠ Drift correction — 2026-04-26 20:22 CST (mid-build)` banner at the top of each stale doc, naming what was originally proposed vs what was actually built. Preserves /spec-time framing as historical context for /reflect-time evaluation while making current truth obvious to any future reader. Without this, /evolve would trip on the spec/prd vs reality mismatch.
+  Acceptance: Future readers (Estevan in 3 months; /evolve in any cycle; a contributor reading the repo) see current truth at the top, with a clean pointer to historical framing below.
+  Verify: Open spec.md/prd.md/scope.md and confirm each leads with the drift-correction banner.
+
+- [x] **1.5. Tier 3 — Move `VIBE_THESIS_HANDOFF.md` under `docs/`**
+  Spec ref: (repo presentation)
+  What was built: `git mv VIBE_THESIS_HANDOFF.md docs/VIBE_THESIS_HANDOFF.md`. Cleaner repo root; the handoff sketch belongs alongside the other planning artifacts in docs/.
+  Acceptance: Repo root README is the obvious entry point; planning history sits together in docs/.
+  Verify: `ls c:/Users/estev/Projects/vibe-thesis/` shows no top-level VIBE_THESIS_HANDOFF.md; `ls docs/` shows it present.
+
+### Iteration 1 — what was NOT done (and why)
+
+- **Bulk markdown lint cleanup across spec.md (~700 lines).** Pre-existing MD060 (table column style) and MD040 (fenced code block language) warnings were already there from the original /spec write. Not introduced by this iteration; not high-leverage to chase now. Defer to a v0.1.x polish pass if marketplace listing requires zero-warning markdown.
+
+- **Demo article PDF render** (item 10 had `08_OUTPUT/pdf/.gitkeep` placeholder). Cannot render from inside this autonomous /iterate session — needs Pandoc + texlive on this Windows host or the dev container. Captured in `docs/VERIFICATION_BEATS_OWED.md > Beat B + C`.
+
+- **Cross-platform path handling in `structural-verification.sh`.** Tier 2 candidate; the script uses `${TMPDIR:-c:/tmp}` which already falls back cross-platform. The hardcoded `c:/tmp` paths in echoed user-facing messages are Windows-specific but the structural code itself is portable. Not worth chasing in this iteration.
+
+- **Refresh-templates automation** (`/vibe-thesis:refresh-templates` to re-sync `templates/full/` from current ThesisStudio HEAD). Step 2 backlog per cart-cycle-brief; out of v0.1.
+
