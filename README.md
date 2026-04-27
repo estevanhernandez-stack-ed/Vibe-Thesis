@@ -29,9 +29,11 @@ template fork), an author-voice synthesis interview, and a self-review-tone guar
 /plugin install vibe-thesis@vibe-thesis
 ```
 
-After install, the orchestrator skill `vibe-thesis` is auto-discovered. The
-slash commands `/vibe-thesis:vibe-render`, `/vibe-thesis:vibe-status`,
-`/vibe-thesis:voice`, `/vibe-thesis:guard` are immediately available.
+**After install, reload Claude Code's plugin registry** so the new skills are
+discovered (the orchestrator skill `vibe-thesis` and the slash commands
+`/vibe-thesis:vibe-render`, `/vibe-thesis:vibe-status`, `/vibe-thesis:voice`,
+`/vibe-thesis:guard`). Either run `/plugin reload`, or close and reopen the
+session — newly-installed plugins do not auto-discover until reload.
 
 ## Quickstart
 

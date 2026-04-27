@@ -32,24 +32,47 @@
 
 ## What's owed (and how to verify)
 
-### Beat A — Hello-world preflight install verification
+### Beat A — Hello-world preflight install verification ✓ COMPLETE 2026-04-26 21:08 CST
 
-**Why it's owed:** the `/plugin marketplace add` and `/plugin install` slash
-commands are Claude Code runtime actions; bash can't drive them.
+**Status:** green. Empirical findings landed below; spec.md + README updated
+inline.
 
-**How to verify:**
+**What ran:**
 
-1. Open Claude Code in any directory.
-2. `/plugin marketplace add c:/tmp/vibe-thesis-helloworld`
-3. `/plugin install vt-helloworld@vt-helloworld`
-4. Run `/vt-helloworld:hello`.
-5. Confirm the skill responds with the preflight green message:
-   `✓ vt-helloworld plugin loaded. Manifest format = .claude-plugin/plugin.json…`.
+1. Created `c:/tmp/vibe-thesis-helloworld/` initially as a bare plugin (just
+   `.claude-plugin/plugin.json` + `skills/hello/SKILL.md` + `commands/hello.md`).
+2. `/plugin marketplace add c:/tmp/vibe-thesis-helloworld` → **failed** with
+   `Marketplace file not found at .../.claude-plugin/marketplace.json`.
+3. **Finding #1:** `/plugin marketplace add` requires a marketplace, not a
+   bare plugin. A marketplace is a directory with `.claude-plugin/marketplace.json`
+   that points to nested plugins via `source` paths.
+4. Restructured the preflight as a single-plugin marketplace (added
+   `c:/tmp/vibe-thesis-helloworld/.claude-plugin/marketplace.json` pointing
+   to `./plugins/vt-helloworld`; moved the plugin contents under
+   `plugins/vt-helloworld/`).
+5. Re-ran `/plugin marketplace add c:/tmp/vibe-thesis-helloworld` →
+   **succeeded.**
+6. `/plugin install vt-helloworld@vt-helloworld` → **succeeded.**
+7. `/vt-helloworld:hello` → at first did not register; after a `/plugin reload`
+   the skill responded with the expected preflight green message.
+8. **Finding #2:** Claude Code does NOT auto-discover newly-installed plugins
+   until a manual `/plugin reload` (or session restart). README updated with
+   this guidance.
 
-**On failure:** any divergence between the spec's plugin format assumptions
-and observed behavior is load-bearing data. Update `docs/spec.md > Plugin
-Manifest` and either update the real plugin's `.claude-plugin/plugin.json` to
-match, or file an issue against the spec for revision.
+**Implications for the live Vibe Thesis install (Beat B):**
+
+- Vibe-Thesis itself was already correctly structured as a marketplace (top-level
+  `.claude-plugin/marketplace.json` + nested `plugins/vibe-thesis/`). No
+  fix needed in the real plugin.
+- Beat B users must run `/plugin reload` after `/plugin install vibe-thesis@vibe-thesis`
+  before the orchestrator skill responds. Captured in README install
+  instructions.
+
+**Spec status:** spec.md > Plugin Manifest assumptions HOLD for the manifest
+shape itself. The marketplace structure (separate `marketplace.json`) was
+correctly captured in the original /spec via the live-docs verification at
+the claude-code-guide subagent dispatch — what was NOT captured was the
+plugin-reload requirement after install. Adding inline.
 
 ### Beat B — Path A (offline) round-trip
 
