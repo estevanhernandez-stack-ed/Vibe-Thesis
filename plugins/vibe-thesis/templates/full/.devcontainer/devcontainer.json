@@ -1,0 +1,32 @@
+{
+  "name": "ThesisStudio",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "James-Yu.latex-workshop",
+        "DavidAnson.vscode-markdownlint",
+        "redhat.vscode-yaml",
+        "tamasfe.even-better-toml",
+        "yzhang.markdown-all-in-one",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "latex-workshop.latex.recipe.default": "lualatex",
+        "editor.formatOnSave": false,
+        "files.eol": "\n"
+      }
+    }
+  },
+  "postCreateCommand": "npm install && echo 'ThesisStudio devcontainer ready. Try: npm run render:pdf'",
+  "remoteUser": "vscode",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": false,
+      "username": "vscode"
+    }
+  }
+}

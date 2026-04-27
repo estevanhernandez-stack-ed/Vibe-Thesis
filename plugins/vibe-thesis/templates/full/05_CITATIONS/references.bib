@@ -1,0 +1,53 @@
+% ThesisStudio sample bibliography.
+% Replace these entries with your own. Each citation key (the first token
+% after the @type{) is what you reference in body markdown via [@key].
+%
+% Example body text:
+%   This claim is supported by prior work [@knuth1984].
+%   Multiple sources: [@knuth1984; @lamport1986; @goossens1994].
+%
+% Citation keys must be unique. The pre-commit hook + `npm run check:citations`
+% will flag any [@key] in body markdown that isn't defined here.
+
+@book{knuth1984,
+  author    = {Knuth, Donald E.},
+  title     = {The {\TeX}book},
+  publisher = {Addison-Wesley},
+  year      = {1984},
+  address   = {Reading, MA},
+  isbn      = {0-201-13448-9}
+}
+
+@book{lamport1986,
+  author    = {Lamport, Leslie},
+  title     = {{\LaTeX}: A Document Preparation System},
+  publisher = {Addison-Wesley},
+  year      = {1986},
+  address   = {Reading, MA},
+  isbn      = {0-201-15790-X}
+}
+
+@book{goossens1994,
+  author    = {Goossens, Michel and Mittelbach, Frank and Samarin, Alexander},
+  title     = {The {\LaTeX} Companion},
+  publisher = {Addison-Wesley},
+  year      = {1994},
+  address   = {Reading, MA},
+  isbn      = {0-201-54199-8}
+}
+
+@article{wadler1989,
+  author  = {Wadler, Philip},
+  title   = {Theorems for Free!},
+  journal = {Functional Programming Languages and Computer Architecture},
+  year    = {1989},
+  pages   = {347--359}
+}
+
+@misc{example_misc,
+  author       = {Example Author},
+  title        = {Example Reference Type},
+  howpublished = {Online},
+  year         = {2026},
+  note         = {Demonstrates the @misc entry type for non-traditional sources}
+}

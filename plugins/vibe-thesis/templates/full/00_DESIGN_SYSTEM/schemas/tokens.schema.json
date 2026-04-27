@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/estevanhernandez-stack-ed/ThesisStudio/schemas/tokens.schema.json",
+  "title": "ThesisStudio Design Tokens",
+  "description": "Canonical design tokens for ThesisStudio. Compiled at build time into LaTeX preamble + CSS + JSON.",
+  "type": "object",
+  "required": ["version", "typography", "colors", "spacing", "citation"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semver. Bumped when tokens change in ways downstream renders should pin against."
+    },
+    "typography": {
+      "type": "object",
+      "required": ["body_font", "heading_font", "code_font", "base_size", "line_height"],
+      "additionalProperties": false,
+      "properties": {
+        "body_font": { "type": "string" },
+        "heading_font": { "type": "string" },
+        "code_font": { "type": "string" },
+        "base_size": { "type": "string", "pattern": "^\\d+(\\.\\d+)?(pt|px|em|rem)$" },
+        "line_height": { "type": "number", "minimum": 1, "maximum": 3 }
+      }
+    },
+    "colors": {
+      "type": "object",
+      "required": ["text", "background", "accent", "link"],
+      "additionalProperties": false,
+      "properties": {
+        "text": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "background": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "accent": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "link": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "code_background": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" }
+      }
+    },
+    "spacing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "paragraph_above": { "type": "string" },
+        "section_above": { "type": "string" },
+        "page_margin": { "type": "string" }
+      }
+    },
+    "code_blocks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "syntax_theme": { "type": "string", "description": "Pandoc highlighting style name (e.g., tango, pygments, kate, monochrome)" },
+        "show_line_numbers": { "type": "boolean" }
+      }
+    },
+    "brand": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "logo_path": { "type": "string" },
+        "cover_image_path": { "type": "string" },
+        "watermark_path": { "type": "string" },
+        "vendored_from": { "type": "string", "format": "uri", "description": "Upstream design-system repo URL" },
+        "vendored_version": { "type": "string", "description": "Pinned version tag of the vendored subset" },
+        "vendored_path": { "type": "string", "description": "Repo-relative path to the vendored CSS file" }
+      }
+    },
+    "editorial": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Editorial layer tokens — light surface, serif body, restrained accents. Sits on top of `brand`.",
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "surface": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "paper": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+            "paper_soft": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+            "paper_deep": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" }
+          }
+        },
+        "ink": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "primary": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+            "secondary": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+            "tertiary": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+            "muted": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" }
+          }
+        },
+        "link": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "default": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+            "hover": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" }
+          }
+        },
+        "typography": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "serif_body": { "type": "string" },
+            "measure": { "type": "string" },
+            "page_max": { "type": "string" },
+            "line_height_body": { "type": "number", "minimum": 1, "maximum": 3 },
+            "line_height_pull": { "type": "number", "minimum": 1, "maximum": 3 }
+          }
+        },
+        "scale": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "h1": { "type": "string" },
+            "h2": { "type": "string" },
+            "h3": { "type": "string" },
+            "dek": { "type": "string" },
+            "body": { "type": "string" },
+            "pull": { "type": "string" },
+            "caption": { "type": "string" },
+            "eyebrow": { "type": "string" },
+            "footnote": { "type": "string" }
+          }
+        }
+      }
+    },
+    "citation": {
+      "type": "object",
+      "required": ["style", "csl_path"],
+      "additionalProperties": false,
+      "properties": {
+        "style": { "type": "string", "description": "Display name for the citation style (e.g., chicago-author-date)" },
+        "csl_path": { "type": "string", "description": "Path to the CSL file relative to repo root" },
+        "bibliography_title": { "type": "string", "default": "References" }
+      }
+    }
+  }
+}

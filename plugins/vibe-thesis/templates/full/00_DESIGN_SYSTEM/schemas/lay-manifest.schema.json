@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/estevanhernandez-stack-ed/ThesisStudio/schemas/lay-manifest.schema.json",
+  "title": "ThesisStudio Lay-Translator Manifest",
+  "description": "Audit trail written next to a lay-translator output (08_OUTPUT/layman/*.manifest.json). Records the source-article provenance, the citation-library version used during translation, and the translator's editorial decisions, so a downstream consumer (BlogStudio or any blog-style importer) can verify the lay version against its source.",
+  "type": "object",
+  "required": [
+    "skill_version",
+    "translated_at",
+    "source_article",
+    "citations",
+    "verbatim_phrases_preserved"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "skill_version": {
+      "type": "string",
+      "pattern": "^v\\d+(\\.\\d+)*$",
+      "description": "Lay-translator skill version. Convention: 'v1', 'v1.1', 'v2', etc."
+    },
+    "translated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 datetime when the translation was produced."
+    },
+    "source_article": {
+      "type": "object",
+      "required": ["commit", "body_files"],
+      "additionalProperties": false,
+      "properties": {
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$|^[0-9a-f]{7,12}$|^uncommitted$",
+          "description": "Git SHA of the source article at translation time. 'uncommitted' if working tree had uncommitted changes."
+        },
+        "git_dirty": {
+          "type": "boolean",
+          "description": "True if the working tree had uncommitted changes at translation time."
+        },
+        "body_files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "Repo-relative paths to the source article body files used as input."
+        },
+        "rendered_source": {
+          "type": ["string", "null"],
+          "description": "Repo-relative path to a rendered markdown source if used (e.g., 08_OUTPUT/markdown/thesis.md), else null when the translator worked from 03_BODY/ directly."
+        }
+      }
+    },
+    "citations": {
+      "type": "object",
+      "required": ["references_bib", "references_bib_hash"],
+      "additionalProperties": false,
+      "properties": {
+        "references_bib": {
+          "type": "string",
+          "description": "Repo-relative path to the BibTeX library used for resolving citations into the lay version's Sources section."
+        },
+        "references_bib_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$|^[0-9a-f]{40}$|^[0-9a-f]{64}$",
+          "description": "Hash of the BibTeX library at translation time (md5, sha1, or sha256)."
+        }
+      }
+    },
+    "section_grouping_map": {
+      "type": "object",
+      "description": "Maps each lay-version section heading to one or more source-article section identifiers (e.g., '§1', '§3.1'). Lets a downstream consumer link 'see the academic source' from any lay section back to its origin.",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" },
+        "minItems": 1
+      }
+    },
+    "verbatim_phrases_preserved": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Exact strings carried through verbatim from source to lay version (hinge sentences, lead-author posture quotes, structural-finding sentences). Empty array is valid (no verbatim required)."
+    },
+    "translator_flags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Short list of judgment-call flags surfaced for lead-author editorial review (passages where compression risked precision loss, unresolved verbatim attributions, etc.). Empty array is valid (clean translation, no flags raised)."
+    },
+    "teaser_path": {
+      "type": ["string", "null"],
+      "description": "Repo-relative path to the teaser variant if produced via --teaser mode, else null. Reserved for the future --teaser feature."
+    }
+  }
+}

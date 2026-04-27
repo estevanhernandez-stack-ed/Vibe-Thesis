@@ -1,0 +1,82 @@
+# ThesisStudio Design Tokens
+# Canonical source. Compiled at build time into:
+#   compiled/tokens.tex   — LaTeX preamble (consumed by render-pdf, render-latex)
+#   compiled/tokens.css   — CSS custom properties (consumed by HTML preview)
+#   compiled/tokens.json  — Structured form (consumed by render scripts)
+#
+# Edit this file to customize your thesis's visual identity.
+# Run `npm run compile:tokens` to regenerate compiled forms.
+# The version field is semver — bump when changes affect downstream pinning.
+
+version: "1.0.0"
+
+typography:
+  body_font: "Source Serif Pro"
+  heading_font: "Source Sans Pro"
+  code_font: "JetBrains Mono"
+  base_size: "11pt"
+  line_height: 1.45
+
+colors:
+  text: "#1a1a1a"
+  background: "#ffffff"
+  accent: "#2c5282"
+  link: "#2b6cb0"
+  code_background: "#f7fafc"
+
+spacing:
+  paragraph_above: "0.5em"
+  section_above: "1.5em"
+  page_margin: "1in"
+
+code_blocks:
+  syntax_theme: "tango"
+  show_line_numbers: false
+
+brand:
+  logo_path: ""
+  cover_image_path: ""
+  watermark_path: ""
+  # Vendored brand fragment — see 00_DESIGN_SYSTEM/brand/README.md
+  vendored_from: "https://github.com/estevanhernandez-stack-ed/626labs-design"
+  vendored_version: "v0.1.0"
+  vendored_path: "00_DESIGN_SYSTEM/brand/colors.css"
+
+# Editorial layer — longform reading register (Theses + Field Notes).
+# Light surface, serif body, restrained accent use. Sits on top of `brand`.
+# Full CSS lives at 00_DESIGN_SYSTEM/editorial/editorial.css.
+editorial:
+  enabled: true
+  surface:
+    paper: "#F7F5F0"        # warm off-white — page background
+    paper_soft: "#FAFAF7"   # raised surface
+    paper_deep: "#EFEBE2"   # divider band
+  ink:
+    primary: "#0F1F31"      # body text
+    secondary: "#2A3649"    # secondary text
+    tertiary: "#5E6B7F"     # captions, metadata
+    muted: "#8E9BAD"        # rules, dingbats
+  link:
+    default: "#0FA8C9"      # dimmed brand cyan, AA contrast on paper
+    hover: "#C21F6C"        # dimmed magenta — duo on hover
+  typography:
+    serif_body: "Source Serif 4"
+    measure: "68ch"          # body column width
+    page_max: "1100px"       # outer width with margin notes
+    line_height_body: 1.65
+    line_height_pull: 1.4
+  scale:
+    h1: "clamp(40px, 5.4vw, 64px)"
+    h2: "clamp(28px, 3.2vw, 34px)"
+    h3: "22px"
+    dek: "22px"              # standfirst
+    body: "19px"
+    pull: "27px"             # pull quote
+    caption: "14px"
+    eyebrow: "13px"
+    footnote: "15px"
+
+citation:
+  style: "chicago-author-date"
+  csl_path: "05_CITATIONS/styles/chicago-author-date.csl"
+  bibliography_title: "References"

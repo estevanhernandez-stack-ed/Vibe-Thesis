@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Lint + schema validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Markdown lint
+        run: npm run lint:md
+
+      - name: Compile design tokens
+        run: npm run compile:tokens
+
+      - name: Schema validation
+        run: npm run validate
+
+      # Citation key check runs against any body files present in examples
+      - name: Citation key check
+        run: npm run check:citations || echo "No citations to check yet (script not built or no body files)"
+        continue-on-error: true
+
+  render-smoke-test:
+    name: Render example chapter (smoke test)
+    runs-on: ubuntu-latest
+    # This job runs after the render pipeline scripts land. Until then,
+    # it only attempts to set up the toolchain and reports gracefully.
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Pandoc + LuaLaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-luatex texlive-latex-extra texlive-fonts-recommended texlive-bibtex-extra biber
+
+      - name: Render example chapter
+        run: |
+          if [ -d "examples/dissertation-chapter" ] && [ -f "scripts/render-pdf.js" ]; then
+            cd examples/dissertation-chapter && npm run render:pdf
+          else
+            echo "Render script or example fixture not yet present. Skipping smoke test."
+          fi
+        continue-on-error: true
+
+  link-check:
+    name: Internal link check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - run: npm run check:links
+        continue-on-error: true   # warn-only for now

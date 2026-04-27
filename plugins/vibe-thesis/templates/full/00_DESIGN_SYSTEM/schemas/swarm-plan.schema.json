@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/estevanhernandez-stack-ed/ThesisStudio/schemas/swarm-plan.schema.json",
+  "title": "ThesisStudio Swarm Plan",
+  "description": "Plan document filled in before dispatching a research-phase agent swarm. One per swarm dispatch.",
+  "type": "object",
+  "required": ["swarm_id", "playbook", "dispatched_by", "dispatched_at", "agents", "convergence"],
+  "additionalProperties": false,
+  "properties": {
+    "swarm_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Unique identifier for this swarm dispatch (e.g., '2026-04-25-litreview-quantum-cryptography')"
+    },
+    "playbook": {
+      "type": "string",
+      "enum": ["lit-review-swarm", "counter-position-swarm", "primary-source-swarm", "custom"]
+    },
+    "dispatched_by": {
+      "type": "string",
+      "description": "Author name dispatching the swarm"
+    },
+    "dispatched_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "thesis_context": {
+      "type": "string",
+      "description": "One-paragraph summary of the active thesis context this swarm is informing"
+    },
+    "agents": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "axis", "prompt"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "axis": {
+            "type": "string",
+            "description": "Research axis this agent covers (e.g., 'prior-art', 'methodology-survey', 'opposing-positions')"
+          },
+          "prompt": { "type": "string", "description": "Full prompt template for the dispatched agent" },
+          "inputs": {
+            "type": "object",
+            "description": "Additional structured inputs for the agent (free-form per playbook)"
+          },
+          "expected_output_schema": {
+            "type": "string",
+            "description": "Description or path to schema defining the agent's expected output"
+          },
+          "output_dir": {
+            "type": "string",
+            "description": "Where this agent's output lands (e.g., '02_RESEARCH/prior-art/')"
+          }
+        }
+      }
+    },
+    "convergence": {
+      "type": "object",
+      "required": ["method", "output_path"],
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["synthesize-skeleton", "deduplicate", "contradiction-map", "manual-review"],
+          "description": "How agent outputs are combined"
+        },
+        "output_path": {
+          "type": "string",
+          "description": "Where the converged output lands (e.g., '03_BODY/02-lit-review.md')"
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

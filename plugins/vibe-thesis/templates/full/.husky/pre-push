@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+npm run lint:md
+npm run validate
+npm run check:citations

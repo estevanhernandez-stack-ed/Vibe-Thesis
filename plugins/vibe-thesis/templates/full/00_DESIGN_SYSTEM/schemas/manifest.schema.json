@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/estevanhernandez-stack-ed/ThesisStudio/schemas/manifest.schema.json",
+  "title": "ThesisStudio Render Manifest",
+  "description": "Audit trail written next to each render output. Reviewers can verify exact reproducibility.",
+  "type": "object",
+  "required": ["rendered_at", "git_commit", "thesis_mode", "design_system_version", "tool_versions", "source_file_hashes"],
+  "additionalProperties": false,
+  "properties": {
+    "rendered_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "git_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$|^[0-9a-f]{7,12}$|^uncommitted$",
+      "description": "Full or short commit SHA. 'uncommitted' if working tree has changes."
+    },
+    "git_dirty": {
+      "type": "boolean",
+      "description": "True if the working tree had uncommitted changes at render time"
+    },
+    "thesis_mode": {
+      "type": "string",
+      "enum": ["dissertation", "article", "masters"]
+    },
+    "design_system_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "citation_style": { "type": "string" },
+    "render_target": {
+      "type": "string",
+      "enum": ["pdf", "latex", "markdown"]
+    },
+    "tool_versions": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "source_file_hashes": {
+      "type": "object",
+      "description": "Map of source path → SHA-256 hash",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^sha256:[0-9a-f]{64}$"
+      }
+    }
+  }
+}

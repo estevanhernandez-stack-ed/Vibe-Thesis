@@ -1,0 +1,218 @@
+/* =========================================================================
+   626 Labs — Colors & Type
+   Brand: dark-mode-first, neon duotone (cyan + magenta) on deep navy.
+   "Imagine Something Else" — technical, playful, a little cyberpunk.
+   ========================================================================= */
+
+/* ---------- Web fonts (Google Fonts fallback — see README for substitution notes) ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ---------- Brand / signature colors ---------- */
+  --brand-navy:        #192e44;  /* primary surface (logo bg) */
+  --brand-navy-deep:   #0f1f31;  /* deeper surface / text on light */
+  --brand-navy-soft:   #223a54;  /* elevated surface */
+
+  --brand-cyan:        #17d4fa;  /* primary accent — "logic / circuitry" */
+  --brand-cyan-bright: #5ce6ff;
+  --brand-cyan-dim:    #0fa8c9;
+
+  --brand-magenta:     #f22f89;  /* secondary accent — "imagination / energy" */
+  --brand-magenta-bright: #ff5aa3;
+  --brand-magenta-dim: #c21f6c;
+
+  /* Signature gradient — the "swoosh" from the logo */
+  --brand-gradient: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-magenta) 100%);
+  --brand-gradient-soft: linear-gradient(135deg, rgba(23,212,250,.18) 0%, rgba(242,47,137,.18) 100%);
+  --brand-gradient-glow: radial-gradient(60% 80% at 30% 30%, rgba(23,212,250,.35) 0%, transparent 60%),
+                         radial-gradient(60% 80% at 70% 70%, rgba(242,47,137,.30) 0%, transparent 60%);
+
+  /* ---------- Neutral scale (dark-first) ---------- */
+  --ink-0:   #ffffff;
+  --ink-50:  #f5f7fb;
+  --ink-100: #e6ebf3;
+  --ink-200: #c4cdda;
+  --ink-300: #8e9bad;
+  --ink-400: #5e6b7f;
+  --ink-500: #3d4a5e;
+  --ink-600: #2a3649;
+  --ink-700: #1e2a3d;
+  --ink-800: #152135;
+  --ink-900: #0a1524;
+  --ink-950: #050c18;
+
+  /* ---------- Foreground tokens ---------- */
+  --fg-1: var(--ink-0);          /* primary text on dark */
+  --fg-2: var(--ink-200);        /* secondary */
+  --fg-3: var(--ink-300);        /* tertiary / captions */
+  --fg-muted: var(--ink-400);    /* disabled / hint */
+  --fg-accent: var(--brand-cyan);
+  --fg-accent-alt: var(--brand-magenta);
+  --fg-on-brand: var(--ink-950); /* text sitting on cyan/magenta buttons */
+
+  /* ---------- Background tokens ---------- */
+  --bg-0: var(--brand-navy-deep);     /* page / "void" */
+  --bg-1: var(--brand-navy);          /* default surface */
+  --bg-2: var(--brand-navy-soft);     /* raised card */
+  --bg-3: var(--ink-600);             /* popover / tooltip */
+  --bg-inverse: var(--ink-50);        /* light-mode panels */
+
+  /* ---------- Semantic state colors ---------- */
+  --success:   #2bd99a;
+  --success-bg: rgba(43,217,154,.12);
+  --warning:   #ffb454;
+  --warning-bg: rgba(255,180,84,.12);
+  --danger:    #ff5472;
+  --danger-bg: rgba(255,84,114,.12);
+  --info:      var(--brand-cyan);
+  --info-bg:   rgba(23,212,250,.12);
+
+  /* ---------- Borders & dividers ---------- */
+  --border-1: rgba(255,255,255,.08);  /* hairline */
+  --border-2: rgba(255,255,255,.14);  /* default */
+  --border-strong: rgba(255,255,255,.24);
+  --border-accent: rgba(23,212,250,.45);
+
+  /* ---------- Radii ---------- */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-2xl: 28px;
+  --r-pill: 999px;
+
+  /* ---------- Spacing (4px base) ---------- */
+  --s-0: 0;
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-20: 80px;
+  --s-24: 96px;
+
+  /* ---------- Shadow / elevation (dark-mode: neon glow, not drop-shadow) ---------- */
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4);
+  --shadow-2: 0 4px 16px rgba(0,0,0,.45);
+  --shadow-3: 0 12px 32px rgba(0,0,0,.55);
+  --glow-cyan: 0 0 0 1px rgba(23,212,250,.35), 0 0 24px rgba(23,212,250,.35);
+  --glow-magenta: 0 0 0 1px rgba(242,47,137,.35), 0 0 24px rgba(242,47,137,.35);
+  --glow-duo: 0 0 24px rgba(23,212,250,.25), 0 0 48px rgba(242,47,137,.18);
+  --inner-stroke: inset 0 0 0 1px rgba(255,255,255,.06);
+
+  /* ---------- Motion ---------- */
+  --ease-out: cubic-bezier(.2,.7,.2,1);
+  --ease-in-out: cubic-bezier(.7,0,.3,1);
+  --dur-fast: 120ms;
+  --dur-med: 220ms;
+  --dur-slow: 380ms;
+
+  /* ---------- Typography families ---------- */
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif; /* headlines, logo lockup */
+  --font-body:    'Inter', system-ui, -apple-system, sans-serif;   /* UI + body */
+  --font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* ---------- Type scale (1.200 ratio, clamped for responsive) ---------- */
+  --t-display: clamp(40px, 6vw, 72px);
+  --t-h1: clamp(32px, 4.2vw, 48px);
+  --t-h2: clamp(26px, 3vw, 36px);
+  --t-h3: 24px;
+  --t-h4: 20px;
+  --t-body-lg: 18px;
+  --t-body: 16px;
+  --t-body-sm: 14px;
+  --t-caption: 12px;
+  --t-micro: 11px;
+
+  --lh-tight: 1.1;
+  --lh-snug: 1.25;
+  --lh-normal: 1.5;
+  --lh-loose: 1.7;
+}
+
+/* ============================================================
+   Semantic element styles — apply directly or via utility classes
+   ============================================================ */
+
+body {
+  background: var(--bg-0);
+  color: var(--fg-1);
+  font-family: var(--font-body);
+  font-size: var(--t-body);
+  line-height: var(--lh-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, .h1 {
+  font-family: var(--font-display);
+  font-size: var(--t-h1);
+  line-height: var(--lh-tight);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--fg-1);
+}
+h2, .h2 {
+  font-family: var(--font-display);
+  font-size: var(--t-h2);
+  line-height: var(--lh-snug);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+h3, .h3 {
+  font-family: var(--font-display);
+  font-size: var(--t-h3);
+  line-height: var(--lh-snug);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+h4, .h4 {
+  font-family: var(--font-display);
+  font-size: var(--t-h4);
+  font-weight: 600;
+}
+.display {
+  font-family: var(--font-display);
+  font-size: var(--t-display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: .95;
+}
+p, .body { font-size: var(--t-body); line-height: var(--lh-normal); color: var(--fg-2); }
+.body-lg { font-size: var(--t-body-lg); line-height: var(--lh-normal); }
+.caption  { font-size: var(--t-caption); color: var(--fg-3); letter-spacing: 0.02em; }
+.micro    { font-size: var(--t-micro); color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+
+code, .code, pre {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-variant-ligatures: none;
+}
+code {
+  background: rgba(23,212,250,.08);
+  color: var(--brand-cyan-bright);
+  padding: 2px 6px;
+  border-radius: var(--r-xs);
+  border: 1px solid var(--border-1);
+}
+
+/* Signature brand gradient text — use sparingly */
+.gradient-text {
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Hairline "circuit" divider — nods to logo motif */
+.hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-accent), transparent);
+  border: 0;
+}

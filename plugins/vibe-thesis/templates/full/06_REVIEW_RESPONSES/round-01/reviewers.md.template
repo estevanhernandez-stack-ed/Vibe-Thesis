@@ -1,0 +1,98 @@
+# Reviewer Responses — Round 1
+
+**Submission:** [Manuscript title]
+**Submitted to:** [Journal / venue]
+**Date received:** [YYYY-MM-DD]
+**Date responding:** [YYYY-MM-DD]
+
+---
+
+## Summary of changes
+
+(One paragraph for the editor: "We thank the reviewers for their thoughtful comments. The revised manuscript addresses the major concerns raised by all reviewers. The principal changes are: [list 2-4 high-level changes]. Detailed point-by-point responses follow.")
+
+---
+
+## Reviewer 1
+
+### Comment 1.1
+
+> [Verbatim quote of the reviewer comment, indented with `>` block-quote.]
+
+**Response:**
+
+[Your response. Acknowledge the point. State what you did. Be concise but not curt.]
+
+**Change made:** Section [N], paragraph [M], lines [X-Y]. (Or: "No change made — see reasoning above.")
+
+---
+
+### Comment 1.2
+
+> [Next reviewer comment.]
+
+**Response:**
+
+[Response.]
+
+**Change made:** [Location reference.]
+
+---
+
+### Comment 1.3
+
+> [Next.]
+
+**Response:**
+
+We thank the reviewer for this observation. No change made because [specific reasoning — e.g., the original phrasing already accounts for this; the comment touches on scope deliberately deferred to future work; the reviewer's reading is based on a misinterpretation we can clarify without restructuring].
+
+---
+
+## Reviewer 2
+
+### Comment 2.1
+
+> [Verbatim quote.]
+
+**Response:**
+
+[Response.]
+
+**Change made:** [Location.]
+
+---
+
+### Comment 2.2
+
+> [Next.]
+
+**Response:**
+
+[Response.]
+
+**Change made:** [Location.]
+
+---
+
+## Reviewer 3 (if applicable)
+
+### Comment 3.1
+
+> [Verbatim quote.]
+
+**Response:**
+
+[Response.]
+
+**Change made:** [Location.]
+
+---
+
+## Conventions for this template
+
+- Quote each reviewer comment **verbatim** in a block-quote. Don't paraphrase — the editor needs to see what was raised, in their words.
+- Number responses as `<reviewer>.<comment>` — Reviewer 1's third comment is `1.3`. Lets you reference back ("see response 2.1").
+- Every response ends with a **change made** line. Either points to a specific location (section/paragraph/line) or explicitly says "No change made because [reason]". No silent skips.
+- Keep responses short. The editor reads many of these; respect their time. Long context belongs in the manuscript, not the response letter.
+- A render command (planned for ThesisStudio v1.1) will extract a journal-ready response letter from this structured tracker. Until then, copy-paste into your journal's submission system manually.
