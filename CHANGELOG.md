@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] — 2026-04-27 — Beta callout + standalone-friendly framing
+
+Documentation-only release. No skill or scaffold changes.
+
+### Added
+
+- **Beta-status callout** at the top of the README. v0.1.x is functional but evolving — skill names, scaffold defaults, and orchestration prompts may shift before a stable v1.0 based on real-use feedback.
+- **Standalone-friendly framing.** The README now explicitly states that Vibe Thesis works on its own with bundled templates — no other plugins required. Pairings with [Thesis Engine][thesis-engine] (research feeder) and the [ThesisStudio][thesisstudio] template (richer styling) are *better* but not required. Replaces the prior "wrapper around ThesisStudio" framing that implied dependency.
+
+### Changed
+
+- `plugins/vibe-thesis/.claude-plugin/plugin.json` version bumped 0.1.0 → 0.1.2 to align the manifest with the git tag (v0.1.1 was a README-casing fix that didn't bump the manifest).
+
+[thesis-engine]: https://github.com/estevanhernandez-stack-ed/Thesis-Engine
+[thesisstudio]: https://github.com/estevanhernandez-stack-ed/ThesisStudio
+
 ## [0.1.0] — 2026-04-26 (in progress)
 
 Initial release. The scope is v0.1 — install the plugin, say "scaffold a

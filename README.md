@@ -2,16 +2,29 @@
 
 > *Start with a strong stance before you even ask for a line of code.*
 
+> **🧪 Beta — currently being tested by 626Labs.** Vibe Thesis v0.1.x is functional but evolving — skill names, scaffold defaults, and orchestration prompts may shift before a stable v1.0 based on what we learn from our own use. Use it for real work; expect refinement. Issues and feedback welcome.
+
 A Claude Code plugin that scaffolds and co-authors thesis-shaped artifacts —
 academic dissertations, master's theses, long-form research articles,
 position essays. Install, say *"scaffold a vibe thesis project for me,"*
 get a styled PDF skeleton plus a working render pipeline in roughly 30 minutes.
 
-Vibe Thesis is a wrapper around the [ThesisStudio][thesisstudio] template that adds
-Claude-Code-native orchestration: dual scaffold paths (offline-bundled or live `gh`
-template fork), an author-voice synthesis interview, and a self-review-tone guard.
+Vibe Thesis ships Claude-Code-native orchestration for academic writing: dual
+scaffold paths (offline-bundled or live `gh` template fork from
+[ThesisStudio][thesisstudio]), an author-voice synthesis interview, and a
+self-review-tone guard.
+
+**Standalone-friendly.** Vibe Thesis works on its own with the bundled
+templates — no other plugins required. It's *better* paired with
+[Thesis Engine][thesis-engine] (an optional research feeder that gathers topics,
+primary sources, opposing positions, and methodology across five research axes)
+and with the [ThesisStudio][thesisstudio] template (richer styling and citation
+defaults via `gh repo create --template`), but neither is required to start
+writing. The dual scaffold path means even a fresh machine with no `gh` and no
+sibling plugins can produce a working PDF in 30 minutes.
 
 [thesisstudio]: https://github.com/estevanhernandez-stack-ed/ThesisStudio
+[thesis-engine]: https://github.com/estevanhernandez-stack-ed/Thesis-Engine
 
 ## Install
 

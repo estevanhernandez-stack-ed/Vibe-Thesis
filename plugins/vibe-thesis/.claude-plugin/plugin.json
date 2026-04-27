@@ -1,6 +1,6 @@
 {
   "name": "vibe-thesis",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Vibe Thesis — scaffold and co-author thesis-shaped artifacts (PDF, HTML, lay-version) with Claude Code. Install, say 'scaffold a vibe thesis project,' get a styled PDF skeleton plus a working render pipeline in roughly 30 minutes.",
   "author": { "name": "626Labs LLC" }
 }
