@@ -151,3 +151,33 @@
 
 - **Refresh-templates automation** (`/vibe-thesis:refresh-templates` to re-sync `templates/full/` from current ThesisStudio HEAD). Step 2 backlog per cart-cycle-brief; out of v0.1.
 
+
+---
+
+## Iteration 2 (2026-04-26 22:08 CST, post-Beat-B findings)
+
+> Beat B (Path A round-trip — Path B actually fired since `gh` was authed) succeeded but surfaced three native-install gaps. Iteration 2 closes them so v0.1.0 can mean "verified clean across both scaffold paths AND both toolchain paths, no manual fixups for fonts/CSL."
+
+- [x] **2.1. CRITICAL — Orchestrator native-install font detection + three-option prompt**
+  Spec ref: `plugins/vibe-thesis/skills/vibe-thesis/SKILL.md > Step 4 — Toolchain install > Native chosen > Font detection`
+  What was built: After native install is chosen, parse `tokens.yaml` for referenced font families and run a presence check (`fc-list` on Linux/macOS; `Get-ChildItem $env:windir\Fonts` on Windows). Skip the check if dev container was chosen (install-fonts.sh handles them at build time). If natives are missing, surface a three-option prompt: (a) switch to dev container, (b) auto-substitute to Latin Modern + disable editorial layer (Estevan's Beat B workaround, now built in), (c) install fonts manually with linked release URLs. Includes the exact `tokens.yaml` rewrite for option (b) with restoration comments. Default suggestion: (a) if Docker is reachable; (b) otherwise.
+  Acceptance: First-time users on native install never silently hit the LaTeX font-not-found wall. The "no manual fixups" criterion holds for users who pick (a) or (b).
+  Verify: Read updated SKILL.md `Step 4 > Native chosen > Font detection` block. Future Beat B re-run on a font-less system should hit the three-option prompt instead of failing.
+
+- [x] **2.2. MEDIUM — File upstream ThesisStudio issue for compile-tokens.js Space Grotesk hardcode**
+  Spec ref: (upstream concern, not Vibe Thesis source change)
+  What was built: Filed [estevanhernandez-stack-ed/ThesisStudio#6](https://github.com/estevanhernandez-stack-ed/ThesisStudio/issues/6) with full repro, expected/actual behavior, suggested fix, and attribution to the Vibe Thesis Beat B finding. Vibe Thesis's option (b) workaround above bridges until upstream fixes.
+  Acceptance: ThesisStudio maintainers (Estevan) have a tracked issue with concrete repro; downstream tools have a documented workaround.
+  Verify: `gh issue view estevanhernandez-stack-ed/ThesisStudio#6` shows the filed issue.
+
+- [x] **2.3. MEDIUM — Ship 6 most-common CSL files in templates payload**
+  Spec ref: `plugins/vibe-thesis/templates/full/05_CITATIONS/styles/README.md` (newly authored)
+  What was built: Fetched 6 canonical CSL files (chicago-author-date, chicago-notes-bibliography, apa, modern-language-association/MLA, ieee, nature) from `citation-style-language/styles` upstream into `templates/full/05_CITATIONS/styles/`. Wrote a styles README documenting what shipped (with a "when to use" guide), how to add more from the upstream repo, why these six (~85% coverage of academic English), and the upstream CC BY-SA 3.0 license inheritance. Total payload growth: ~568KB.
+  Acceptance: Bootstrap's chosen citation style (default `chicago-author-date`) actually has a `.csl` file at the path `tokens.yaml` references. No more silent Pandoc fallback to default formatting.
+  Verify: `ls plugins/vibe-thesis/templates/full/05_CITATIONS/styles/*.csl` shows 6 files. After scaffold, `cat 05_CITATIONS/styles/chicago-author-date.csl | head -3` returns valid XML.
+
+### Iteration 2 — what was NOT done (and why)
+
+- **Harvard / Vancouver generic CSL files.** The upstream `citation-style-language/styles` repo does not ship generic Harvard or Vancouver styles — both are typically institution-flavored (e.g., `cardiff-university-harvard.csl`, `bmj.csl` for Vancouver-style). The styles README documents this gap and points users to the upstream repo + Zotero registry for institution-specific picks.
+- **Upstream Space Grotesk fix.** Issue #6 filed against ThesisStudio; not appropriate for Vibe Thesis to PR upstream during its own cycle. Vibe Thesis ships the option (b) workaround that bridges until the upstream fix lands.
+- **Auto-detect font check on Path B's gh-spawned tree.** Path B inherits ThesisStudio's tokens.yaml (which references the same fonts); the font-detection logic in 2.1 fires identically regardless of scaffold path. No path-specific code needed.

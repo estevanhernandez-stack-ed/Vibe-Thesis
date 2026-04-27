@@ -170,12 +170,76 @@ Ask one question:
 
 - **Native chosen:**
   - Run quick check: `pandoc --version`, `xelatex --version`, `biber
-    --version`, `node --version`, `fc-list | grep -i "Source Serif"` (font
-    presence).
+    --version`, `node --version`.
   - For each missing tool, surface clear install instructions for the user's
     OS (`apt install texlive-xetex pandoc biber` on Debian/Ubuntu;
-    `brew install pandoc texlive` on macOS via MacTeX; etc.).
+    `brew install pandoc texlive` on macOS via MacTeX; `winget install
+    JohnMacFarlane.Pandoc MiKTeX.MiKTeX` on Windows; etc.).
   - Recommend switching to dev container if multiple gaps surface.
+
+  - **Font detection (added Iteration 2.1, post-Beat-B finding).** After the
+    toolchain binary check, parse the project's
+    `00_DESIGN_SYSTEM/tokens.yaml` for `typography.serif_body`,
+    `typography.sans_heading`, `typography.code_font` (and the editorial
+    layer's font references if `editorial.enabled: true`). For each named
+    font family, run a presence check:
+    - **Linux/macOS:** `fc-list | grep -iE "<family>"`
+    - **Windows:** `gci $env:windir\Fonts -Recurse -Include *.ttf,*.otf | Select-String -Pattern "<family>"`
+      (or simpler: `Get-ChildItem $env:windir\Fonts | Where-Object Name -like "*<family>*"`)
+  - If the dev container path was chosen, skip this check entirely — the
+    container's `install-fonts.sh` handles the design-system fonts at build
+    time.
+  - If native path was chosen AND any font is missing, surface this
+    three-option prompt (do NOT silently proceed — empirical Beat B finding
+    showed this is exactly the failure mode that breaks the
+    "no-manual-fixups" acceptance criterion for first-time users):
+
+    > **Toolchain native install: missing fonts detected.** The design system
+    > references `<comma-separated missing list>`. None of these are on
+    > your system. Three options:
+    >
+    > **(a) Switch to dev container** — the container's `install-fonts.sh`
+    > pins releases for JetBrains Mono v2.304, Source Serif 4 v4.005, and
+    > Space Grotesk and installs them automatically. Adds ~10-15 min to first
+    > scaffold for the container build.
+    >
+    > **(b) Auto-substitute to Latin Modern + disable editorial layer** —
+    > replaces `tokens.yaml` typography with Latin Modern Roman/Sans/Mono
+    > (ships with TeX Live and MiKTeX) AND sets `editorial.enabled: false`
+    > to avoid the upstream `compile-tokens.js` Space Grotesk hardcode. The
+    > render works immediately with publication-acceptable typography but
+    > loses the design-system look. A comment is left in `tokens.yaml`
+    > explaining how to restore both. *(This is the workaround Estevan ran
+    > manually during Beat B — now built in.)*
+    >
+    > **(c) Install the fonts yourself** — download from:
+    > - JetBrains Mono v2.304: <https://github.com/JetBrains/JetBrainsMono/releases/tag/v2.304>
+    > - Source Serif 4 v4.005: <https://github.com/adobe-fonts/source-serif/releases/tag/4.005R>
+    > - Space Grotesk: <https://github.com/floriankarsten/space-grotesk>
+    >
+    > Then re-run `/vibe-thesis` to retry the round-trip. Default: option (a)
+    > if Docker is reachable; otherwise option (b).
+
+  - **Apply option (b) when chosen:** edit `tokens.yaml` to set:
+
+    ```yaml
+    typography:
+      serif_body: "Latin Modern Roman"
+      sans_heading: "Latin Modern Sans"
+      code_font: "Latin Modern Mono"
+    editorial:
+      enabled: false  # Disabled to avoid upstream compile-tokens.js
+                      # hardcode of Space Grotesk in editorial layer.
+                      # See https://github.com/estevanhernandez-stack-ed/ThesisStudio/issues
+                      # for the upstream fix tracker.
+    # ORIGINAL VALUES (restore when fonts are installed):
+    #   typography.serif_body: "Source Serif 4"
+    #   typography.sans_heading: "Source Sans Pro"
+    #   typography.code_font: "JetBrains Mono"
+    #   editorial.enabled: true
+    ```
+
+    Then re-run `npm run compile-tokens` to regenerate the LaTeX/CSS variants.
 
 ### Step 5 — Round-trip confirmation
 

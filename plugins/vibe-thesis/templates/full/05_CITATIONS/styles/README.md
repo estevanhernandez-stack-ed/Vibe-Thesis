@@ -1,53 +1,54 @@
-# Citation Styles
+# Citation Styles (CSL)
 
-CSL (Citation Style Language) files defining how citations render in PDF and LaTeX outputs.
+Six citation styles ship pre-installed with the Vibe Thesis templates payload.
+Each is a verbatim copy from the
+[citation-style-language/styles](https://github.com/citation-style-language/styles)
+canonical repo, fetched at plugin build time.
 
-## Default
+## Shipped styles
 
-ThesisStudio defaults to **Chicago Author-Date** (`chicago-author-date.csl`).
+| Style | Slug | When to use |
+|---|---|---|
+| Chicago Author-Date | `chicago-author-date.csl` | Humanities and social sciences (default per `tokens.yaml`) |
+| Chicago Notes-Bibliography | `chicago-notes-bibliography.csl` | History, philosophy, the humanities — footnote-heavy work |
+| APA 7th Edition | `apa.csl` | Psychology, education, behavioral sciences |
+| MLA 9th Edition | `modern-language-association.csl` | Literature, modern languages |
+| IEEE | `ieee.csl` | Engineering, computer science |
+| Nature | `nature.csl` | Natural sciences (Nature journals + many adjacent venues) |
 
-> **First-time setup:** download the official CSL file and place it here as `chicago-author-date.csl`. The file is too large to ship inline in the template (~700 lines of XML), but it's a one-line download:
->
-> ```bash
-> curl -L https://raw.githubusercontent.com/citation-style-language/styles/master/chicago-author-date.csl -o chicago-author-date.csl
-> ```
->
-> The CI workflow includes this step. The devcontainer `postCreateCommand` should also fetch it on first build.
+## Selecting a style
 
-## Switching styles
-
-To use a different style:
-
-1. Find the CSL file from [Zotero Style Repository](https://www.zotero.org/styles) (~10,000 styles available) or the [official-repository](https://github.com/citation-style-language/styles).
-2. Drop it into this directory.
-3. Update `00_DESIGN_SYSTEM/tokens.yaml`:
+1. Edit `00_DESIGN_SYSTEM/tokens.yaml`:
 
    ```yaml
    citation:
-     style: "your-style-name"
-     csl_path: "05_CITATIONS/styles/your-style.csl"
+     style: chicago-author-date          # any slug from the table above
+     csl_path: 05_CITATIONS/styles/chicago-author-date.csl
    ```
 
-4. Re-render.
+2. Run `npm run compile-tokens` to refresh.
+3. Render: `npm run render:pdf`. Pandoc reads the CSL via the manifest.
 
-## Common alternatives
+## Adding a different style
 
-| Field / journal | Style filename |
-| --- | --- |
-| Humanities | `chicago-note-bibliography.csl` |
-| Social sciences | `apa.csl`, `apa-7th-edition.csl` |
-| Literature | `mla.csl`, `modern-language-association.csl` |
-| Engineering | `ieee.csl` |
-| Physics | `physical-review-letters.csl` |
-| Biology | `nature.csl`, `cell.csl` |
-| Computer science | `acm-sig-proceedings.csl`, `ieee.csl` |
+The upstream CSL repo has 10,000+ styles for specific journals, conferences,
+and institutions. To add one not shipped here:
 
-## Bundling considerations
+1. Browse [Zotero Style Repository](https://www.zotero.org/styles) or
+   [citation-style-language/styles](https://github.com/citation-style-language/styles).
+2. Download the `.csl` file into this directory.
+3. Update `tokens.yaml` `citation.style` and `citation.csl_path` to point at it.
 
-The template ships with the README pointing at the download rather than the CSL itself because:
+## Why these six
 
-- CSL files are licensed CC-BY-SA — bundling requires preserving the license header.
-- They evolve frequently; pinning a version in the template would go stale.
-- The Zotero repository download path is stable and well-known.
+Together they cover ~85% of academic citation needs in English-language
+humanities, social sciences, sciences, and engineering. **Harvard and Vancouver
+styles** are typically institution-flavored (no generic version in the upstream
+repo); pick a journal-specific or institution-specific variant from the
+upstream repo when you need one — most universities publish their own.
 
-Forking users get instructions; CI/devcontainer fetches automatically.
+## Upstream license
+
+CSL files in the upstream repo are licensed under
+[Creative Commons Attribution-ShareAlike 3.0 Unported](https://creativecommons.org/licenses/by-sa/3.0/).
+This directory inherits that license for the shipped `.csl` files.
