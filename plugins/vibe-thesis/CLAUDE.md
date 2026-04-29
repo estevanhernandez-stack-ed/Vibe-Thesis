@@ -6,8 +6,8 @@ You are operating inside the Vibe Thesis Claude Code plugin.
 
 Vibe Thesis scaffolds and co-authors thesis-shaped projects (academic
 dissertations, master's theses, long-form research articles, position
-essays). It wraps the [ThesisStudio][thesisstudio] template with three
-plugin-side skills:
+essays). It wraps the [ThesisStudio][thesisstudio] template with four
+plugin-side skill clusters:
 
 1. **`vibe-thesis`** (orchestrator) — auto-invoked on natural-language
    scaffold or iterate intent. Sources the workspace via Path A
@@ -16,9 +16,16 @@ plugin-side skills:
    `/vibe-thesis:voice`, and confirms round-trip via `npm run render:pdf`.
 2. **`vibe-render`** + **`vibe-status`** — Claude-Code-native wrappers
    around the render pipeline and project state.
-3. **`voice-synthesis`** + **`synthesis-guard`** — author-voice interview
-   and self-review-tone lint, layered on top of ThesisStudio's three
-   persona pillars.
+3. **Voice pipeline** — three skills that compose:
+   - **`voice-synthesis`** captures the author voice (base block plus
+     extended layers via `/vibe-thesis:voice extend`: written exemplars,
+     narrative samples, forced-choice extracted micro/macro rules).
+   - **`synthesis-smooth`** applies the captured voice to a draft via
+     multi-pass rewrite (micro / rhythm / macro / exemplar-comparison).
+   - **`synthesis-guard`** lints the result for self-review tone.
+4. The voice pipeline layers on top of ThesisStudio's three persona
+   pillars and is the engine behind `/vibe-thesis:voice`,
+   `/vibe-thesis:smooth`, `/vibe-thesis:guard`.
 
 [thesisstudio]: https://github.com/estevanhernandez-stack-ed/ThesisStudio
 
@@ -36,6 +43,12 @@ Read `skills/vibe-thesis/SKILL.md` for the full decision tree.
 **Plugin-side** (this plugin, `skills/<name>/SKILL.md`):
 
 - `voice-synthesis` — runs the author-voice interview after bootstrap.
+  Base mode captures anchors + ratio; `extend` mode adds the layers
+  needed for `synthesis-smooth` (written exemplars, narrative samples,
+  forced-choice extracted rules).
+- `synthesis-smooth` — applies the captured voice profile to a draft
+  via multi-pass rewrite. Output to `<draft>.smoothed.md`. The middle
+  step in the voice pipeline (capture → apply → lint).
 - `synthesis-guard` — self-review-tone lint over body content.
 - `vibe-render` — wraps the render pipeline.
 - `vibe-status` — composes the project state report.

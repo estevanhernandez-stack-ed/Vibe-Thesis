@@ -1,6 +1,6 @@
 ---
 name: voice-synthesis
-description: "Interview the user for author voice synthesis: 2-4 well-known authors + 2-4 contemporary field experts in the topic + a synthesis ratio. Writes a `## VOICE SYNTHESIS` block to CLAUDE.md so the LeadWriter persona reads it at drafting time. Idempotent — re-runnable to revise. Invoked by the orchestrator post-bootstrap, or directly via /vibe-thesis:voice."
+description: "Interview the user for author voice synthesis. Two modes: base (2-4 well-known authors + 2-4 contemporary field experts + a synthesis ratio) and extend (written exemplars, narrative samples, micro/macro rules — three elicitation channels that feed /vibe-thesis:smooth). Writes a `## VOICE SYNTHESIS` block to CLAUDE.md so the LeadWriter persona reads it at drafting time. Idempotent — re-runnable to revise or add layers. Invoked by the orchestrator post-bootstrap, or directly via /vibe-thesis:voice."
 user-invocable: true
 disable-model-invocation: false
 allowed-tools: Read Edit Write Grep Glob WebSearch
@@ -28,12 +28,29 @@ Current directory must contain a `VIBE_THESIS_MARKER` stanza in `CLAUDE.md`.
 - **On-demand.** User runs `/vibe-thesis:voice` to revise the voice mid-project.
   Idempotent — overwrites the existing `## VOICE SYNTHESIS` block in CLAUDE.md.
 - **`revise` arg.** Same as on-demand. Explicit re-run signal.
+- **`extend` arg.** Adds layers 2a/2b/3/4 (written exemplars, narrative samples,
+  micro/macro rules) on top of the base block. Required prerequisite for
+  `/vibe-thesis:smooth` to do real transformation work — without extension,
+  the voice profile only carries authors + ratio, which is not enough signal
+  for prose rewriting.
+- **`extend exemplars|narrative|rules|macro` arg.** Extend a specific layer
+  in isolation. Use when the base extend has been run and the user wants to
+  add or revise just one channel (e.g., "I just transcribed a new narrative
+  sample, fold it in").
 
-## Detection — fresh vs revise
+## Detection — base mode vs extend mode
 
-- **`grep -q "## VOICE SYNTHESIS" CLAUDE.md`** → `revise` mode. Read the existing
-  block; show the user the current values; ask field-by-field "keep / change."
-- **No existing block** → fresh mode. Run the full three-question interview.
+- **No `extend` arg, no existing block** → base fresh mode. Run the
+  three-question interview (sections below).
+- **No `extend` arg, existing block** → base revise mode. Show current values;
+  ask field-by-field "keep / change."
+- **`extend` arg, no existing block** → refuse politely. Tell the user to run
+  `/vibe-thesis:voice` first to lay down the base block, then `extend`.
+- **`extend` arg, existing base block** → extend mode. Skip the three base
+  questions; jump straight to the channel A/B/C interview (see "Extend mode"
+  section below).
+- **`extend <layer>` arg** → extend mode, single layer. Run only the channel
+  for the named layer.
 
 ## The interview (one question per turn)
 
@@ -111,17 +128,201 @@ author, use their framing verbatim. Otherwise, generate a single-line anchor
 based on what the author is known for — rhythm, sentence shape, attention
 pattern, structural moves.
 
+## Extend mode — three elicitation channels
+
+Extend mode adds the layers `/vibe-thesis:smooth` needs to actually rewrite
+prose. Three channels feed the extended profile, none of which require the
+user to invent voice rules from scratch:
+
+- **Channel A — written exemplars.** User points at 2-3 passages that
+  "sound most like you." Skill auto-extracts micro candidates (verb
+  preference, punctuation density, sentence-length distribution, modal
+  stance, lexicon flags) and macro candidates (paragraph templates,
+  section-close moves) and presents them as forced-choice for confirmation.
+- **Channel B — narrative samples.** User picks an intended register, gets
+  a matched prompt, and pastes a transcribed spoken sample. Audio is out
+  of scope — the user supplies their own ASR (OS dictation, services, or
+  pre-existing artifacts like Slack threads or work emails). Each sample
+  is tagged with its register so smooth can pick samples matching the
+  draft. Sweet spot: magazine / blog / personable-but-semi-professional
+  register where written drafts have often been over-edited toward
+  corporate-speak.
+- **Channel C — forced-choice rule extraction.** Auto-runs over A and B;
+  no user input beyond confirming candidates.
+
+### When `extend` runs (no specific layer)
+
+Walk through the channels in order. After each channel, write the layer
+back to the `## VOICE SYNTHESIS` block before moving to the next — partial
+extension is fine, the user can stop after any channel and re-run later
+to add the rest.
+
+### Channel A — written exemplars
+
+> "Point me at 2-3 passages that sound most like you. File paths, or paste
+> them inline. I'll extract candidate voice rules and you confirm what's
+> right."
+
+Accept file paths, paste-blocks (delimited by `---`), or a mix. If the user
+is in a thesis project with `03_BODY/*.md` populated and an
+`operating-tenets.md` or similar canonical file at the repo root, offer
+those as defaults: *"Use 03_BODY/00-introduction.md and operating-tenets.md
+as defaults?"*
+
+Once exemplars are pinned, run automated extraction:
+
+1. **Micro-rule candidates.** Compute and present each as a one-line
+   forced-choice:
+   - Verb-tense distribution (active/passive ratio, motion vs state verbs)
+   - Punctuation density (em-dashes per paragraph, ellipsis count, comma-runs)
+   - Sentence-length distribution (mean, std-dev, the long-short rhythm)
+   - Modal-stance markers (hedge frequency, certainty markers, deontic register)
+   - Lexicon flags (corporate-speak hits, signature phrases, repeated discourse markers)
+
+   Format each candidate as: *"You use em-dashes 3.1x per paragraph. Mean
+   sentence length 14 words, std-dev 8 — short sentences cluster at section
+   closes. Confirm, edit, or reject?"*
+
+2. **Macro-template candidates.** Recognize paragraph-template shapes
+   across exemplars:
+   - **Claim → evidence → distill** — open with the assertion, support, land in one line
+   - **Setup → turn** — context first, pivot mid-paragraph
+   - **Rule + reason** — directive then justification
+   - **List + landing** — enumerate, then a single sentence that compresses the lesson
+
+   Report distribution: *"Across these 3 exemplars, ~70% claim → evidence
+   → distill, ~20% rule + reason, ~10% other. Confirm or adjust?"*
+
+3. **Section-close mining.** Pull the last paragraph of every section in
+   the exemplars, show them side by side: *"Which of these feel most like
+   a signature ending?"* User picks 3-5; those become the closing-move
+   references in the profile.
+
+### Channel B — narrative samples
+
+> "Pick an intended register, then either record yourself talking and paste
+> the transcript here, or paste a natural artifact (Slack thread, old
+> Reddit comment, work email — anywhere you didn't think to polish)."
+
+Register menu (the user picks one or skips with a paste):
+
+| Register | Matched prompt |
+| --- | --- |
+| Professional / work | "Walk me through your last work meeting" — or paste a work email |
+| Personal mission | "Talk for 2 minutes about what you want X to be" |
+| Teaching | "Explain something you know well to someone who's never heard of it" |
+| Critical / edged | "Tell me about something that frustrates you in your domain" |
+| Narrative / story | "Tell me about a project that almost failed and what saved it" |
+
+Once the user pastes, do **not** auto-strip discourse markers. Modern ASR
+already strips um/uh; the real signal/noise question is *kind of, sort of,
+I mean, basically, you know, like (filler-position), right?, make sense?,
+so (sentence-start)*. Some are voice; some are noise.
+
+Process:
+
+1. Save the **raw transcript** to the profile verbatim (always preserved).
+2. Identify recurring discourse markers; present each as forced-choice:
+   *"You used 'you know' 7 times in this sample. Voice signature, or strip
+   from analysis?"*
+3. Build a **cleaned copy** based on user choices, kept alongside the raw.
+4. Run the same micro / macro extraction (channel C) over the cleaned copy.
+5. Tag the sample with its register.
+
+### Channel C — forced-choice rule extraction
+
+Runs automatically over channel A exemplars and channel B cleaned copies.
+No new user input — this channel just consolidates the extracted candidates
+from A and B into the profile. If A and B disagree on a rule (e.g., written
+exemplars show 14-word sentences, narrative shows 8-word sentences), record
+both with register tags so smooth can apply the right one for the draft's
+register.
+
+## Writing the extended VOICE SYNTHESIS block
+
+The base block (timeless / experts / ratio) stays at the top, untouched.
+Extend mode appends sub-blocks under it:
+
+```markdown
+## VOICE SYNTHESIS
+
+> Generated by /vibe-thesis:voice on <YYYY-MM-DD>. Extended on <YYYY-MM-DD>. Re-runnable.
+
+[base block: Timeless voices / Current experts / Synthesis ratio / Synthesis discipline — unchanged]
+
+---
+
+### Layer 2a — Written exemplars
+
+- `<path-1>` — <one-line note: what voice this captures>
+- `<path-2>` — <…>
+- `<path-3>` — <…>
+
+### Layer 2b — Narrative samples
+
+#### Sample 1 — register: <register-tag>
+**Raw transcript:**
+> <verbatim, including all discourse markers>
+
+**Cleaned (user-confirmed strips):**
+> <cleaned text>
+
+**Stripped markers (this sample):** <list>
+
+[…repeat per sample…]
+
+### Layer 3 — Micro-rules (forced-choice confirmed)
+
+| Rule | Value | Source |
+| --- | --- | --- |
+| Em-dashes per paragraph | 3.1 | written |
+| Ellipses per paragraph | 0.0 | written |
+| Mean sentence length | 14 words | written |
+| Mean sentence length | 8 words | narrative — magazine |
+| Active/passive ratio | 4:1 | written |
+| Hedge frequency | low | written |
+| Hedge frequency | medium | narrative — teaching |
+| Lexicon flags (avoid) | "let me know if there's anything else"; "happy to assist" | both |
+| Signature phrases (keep) | "you know"; "kind of"; sentence-start "so" | narrative |
+
+### Layer 4 — Macro-rules (template recognition + section-close mining)
+
+**Paragraph templates (distribution across written exemplars):**
+- Claim → evidence → distill — 70%
+- Rule + reason — 20%
+- Other — 10%
+
+**Section-close moves (user-picked references):**
+1. <quoted closing paragraph 1>
+2. <quoted closing paragraph 2>
+3. <quoted closing paragraph 3>
+```
+
+Use `Edit` to write this back to `CLAUDE.md`. Replace the existing
+`## VOICE SYNTHESIS` block in-place — preserve everything else byte-for-byte.
+
 ## Idempotency
 
 Re-running on a project with an existing `## VOICE SYNTHESIS` block:
 
 1. Detect the existing block (heading + content up to next `## ` or end of file).
 2. Show the user the current values: "Current voice synthesis: timeless [A, B,
-   C], experts [X, Y, Z], ratio = even. Update?"
+   C], experts [X, Y, Z], ratio = even. Extended layers present: [2a, 2b, 3, 4].
+   Update?"
 3. If user says yes, run the interview again with current values shown as
    defaults the user can keep or change.
 4. Replace the existing block in-place using `Edit` (not `Write` — preserve
    the rest of CLAUDE.md byte-for-byte).
+
+For extend mode specifically:
+
+- **Single-layer extend** edits only the named sub-block; never touches
+  base block or other layers.
+- **Full extend on a profile with existing extended layers** asks
+  per-layer "keep / replace / add to" before touching content. Channel B
+  narrative samples accumulate by default (new sample appended, not
+  overwriting old); A/3/4 replace by default (re-extraction over fresh
+  exemplars supersedes prior values).
 
 ## Edge cases
 
@@ -135,3 +336,19 @@ Re-running on a project with an existing `## VOICE SYNTHESIS` block:
   let the user proceed with timeless-only.
 - User's CLAUDE.md is in a non-standard state (no marker, no pillar block):
   warn but proceed — append the block at end of file.
+- **Extend on a project with no body content yet.** Channel A has nothing to
+  point at. Tell the user: *"No body files detected. Channel A needs prose
+  to extract from — either point me at exemplars elsewhere on the
+  filesystem, or skip A and run B + C on narrative samples only."*
+- **Extend B with a transcript that has no recurring discourse markers.**
+  Skip the strip-confirmation step; record the raw transcript and proceed
+  to extraction. Surface the observation: *"No recurring discourse markers
+  detected — either you cleaned this already or your spoken voice doesn't
+  lean on them."*
+- **Channel A and B disagree sharply on a micro-rule** (e.g., written shows
+  14-word sentences, narrative shows 4-word sentences). Don't average; record
+  both with register tags. Smooth picks the right one based on draft register.
+- **Extend single-layer when that layer doesn't exist yet in the profile.**
+  Allowed — write only that layer's sub-block and leave others empty
+  (sub-block heading present, contents say "deferred — run /vibe-thesis:voice
+  extend <layer> to populate").
