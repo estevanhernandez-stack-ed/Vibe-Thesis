@@ -122,4 +122,4 @@ One of 11 plugins in the **[Vibe Plugins](https://github.com/estevanhernandez-st
 
 ## License
 
-[MIT](LICENSE) © 2026 626 Labs LLC. — *Imagine Something Else.*
+[MIT](LICENSE) — *Imagine Something Else.*
