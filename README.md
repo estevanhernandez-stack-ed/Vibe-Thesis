@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/brand/icon.svg" width="120" alt="vibe-thesis mark"></p>
+
 <p align="center">
   <img alt="Vibe Thesis — start with a strong stance" src="https://626labs.dev/assets/brand/plugins/vibe-thesis-banner-1500x500.png" />
 </p>
